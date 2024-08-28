@@ -7,17 +7,28 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->createLayouts();
 
     this->settingLayouts();
+
+    this->iniciateMemory();
 }
 
 MainWindow::~MainWindow()
 {
+    delete this->mainLayout;
+    delete this->layoutWindow;
 
+    delete this->processor->controlUnit;
+
+    delete this->processor->dataPath;
+
+    delete this->processor->mainMemory;
+
+    delete this->processor;
 }
 
 void MainWindow::configureWindow()
 {
     QWidget::setWindowTitle("Processor Simulator");
-    this->setMinimumSize(1260, 768);
+    this->setBaseSize(800, 600);
 
     QScreen *screen = QGuiApplication::primaryScreen();
     int screenWidth = screen->geometry().width();
@@ -40,6 +51,11 @@ void MainWindow::settingLayouts()
     this->setCentralWidget(this->layoutWindow);
 }
 
+void MainWindow::iniciateMemory()
+{
+    this->processor->mainMemory->fill("0", 32);
+}
+
 void MainWindow::darkTheme()
 {
     // Dark Theme
@@ -50,4 +66,64 @@ void MainWindow::darkTheme()
     pal.setColor(QPalette::ButtonText, Qt::white);
     this->setAutoFillBackground(true);
     this->setPalette(pal);
+}
+
+void Processor::LOAD()
+{
+
+}
+
+void Processor::STORE()
+{
+
+}
+
+void Processor::MOVE()
+{
+
+}
+
+void Processor::ADD()
+{
+
+}
+
+void Processor::SUB()
+{
+
+}
+
+void Processor::AND()
+{
+
+}
+
+void Processor::OR()
+{
+
+}
+
+void Processor::BRANCH()
+{
+
+}
+
+void Processor::BZERO()
+{
+
+}
+
+void Processor::BNEG()
+{
+
+}
+
+void Processor::NOP()
+{
+
+}
+
+void Processor::HALT()
+{
+
 }
