@@ -8,6 +8,11 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QDebug>
+#include <QSplitter>
+#include <QScrollArea>
+#include <QSizePolicy>
+#include <QLineEdit>
+#include <QLabel>
 #include "controlunit.h"
 #include "datapath.h"
 
@@ -42,14 +47,36 @@ public:
     ~MainWindow();
 
 private:
+    QSplitter *split1 = nullptr;
+    QSplitter *split2 = nullptr;
+
+    QScrollArea *controlUnitScroll = nullptr;
+    QScrollArea *dataPathScroll = nullptr;
+    QScrollArea *mainMemoryScroll = nullptr;
+
+    QWidget *controlUnitLayoutWindow = nullptr;
+    QWidget *dataPathLayoutWindow = nullptr;
+    QWidget *mainMemoryAuxLayoutWindow = nullptr;
+    QWidget *mainMemoryLayoutWindow = nullptr;
+    QWidget *containerLayoutWindow = nullptr;
+    QWidget *mainLayoutWindow = nullptr;
+
+    QVBoxLayout *controlUnitLayout = nullptr;
+    QVBoxLayout *dataPathLayout = nullptr;
+    QHBoxLayout *mainMemoryAuxLayout = nullptr;
+    QGridLayout *mainMemoryLayout = nullptr;
+    QHBoxLayout *containerLayout = nullptr;
+    QHBoxLayout *mainLayout = nullptr;
+
     Processor *processor = new Processor;
 
-    QWidget *layoutWindow = nullptr;
-
-    QVBoxLayout *mainLayout = nullptr;
+    QVector<QLabel*> *positionLabel = nullptr;
+    QVector<QLineEdit*> *lineMemory = nullptr;
 
 protected:
     void configureWindow();
+    void createWidgets();
+    void createMainMemory();
     void createLayouts();
     void settingLayouts();
     void iniciateMemory();
