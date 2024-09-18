@@ -15,6 +15,14 @@
 #include <QLabel>
 #include <QTableWidget>
 #include <QHeaderView>
+
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QIODevice>
+#include <QFile>
+#include <QTextStream>
+#include <QLineEdit>
+
 #include "controlunit.h"
 #include "datapath.h"
 
@@ -47,7 +55,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    QFile file;
+
+
 private:
+    QPushButton *file_buton = new QPushButton("Input File");
+
     QSplitter *split = nullptr;
 
     QScrollArea *controlUnitScroll = nullptr;
@@ -74,10 +87,12 @@ protected:
     void createLayouts();
     void settingLayouts();
     void iniciateMemory();
+    void connectButons();
 
 public slots:
     void darkTheme();
     void textChanged(QTableWidgetItem *item);
+    void Readfile();
 };
 
 #endif // MAINWINDOW_H

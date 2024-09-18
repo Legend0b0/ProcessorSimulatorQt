@@ -12,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     this->settingLayouts();
 
+    this->connectButons();
+
     this->iniciateMemory();
 
     this->resize(1200, 800);
@@ -62,6 +64,11 @@ void MainWindow::createWidgets()
 
     this->controlUnitScroll = new QScrollArea;
     this->dataPathScroll = new QScrollArea;
+}
+
+void MainWindow::connectButons()
+{
+  QObject::connect(this->file_buton, &QPushButton::clicked, this, &MainWindow::Readfile);
 }
 
 void MainWindow::createMainMemory()
@@ -119,7 +126,7 @@ void MainWindow::settingLayouts()
     this->dataPathScroll->setWidget(this->dataPathLayoutWindow);
 
     this->mainMemoryLayout->addWidget(new QLabel("Main Memory"));
-    this->mainMemoryLayout->addWidget(new QPushButton("Input File"));
+    this->mainMemoryLayout->addWidget(file_buton);
     this->mainMemoryLayout->addWidget(this->tableMemory);
     this->mainMemoryLayoutWindow->setFixedWidth(250);
 
@@ -151,6 +158,36 @@ void MainWindow::darkTheme()
     this->setAutoFillBackground(true);
     this->setPalette(pal);
 }
+
+void MainWindow::Readfile()
+{
+    QString filename = QFileDialog::getOpenFileName(this, tr("Abrir ficheiro"),QDir::currentPath(), tr("Text files (*.txt)"));
+
+    file.setFileName(filename);
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QMessageBox::information(this,"..","File not found");
+        return;
+    }
+
+    QTextStream in(&file);
+
+    for(int i=0;!in.atEnd();i++)
+    {
+        QString line = in.readLine();
+        if (line.isNull())
+        {
+            break;
+        }
+        else
+        {
+            tableMemory->item(i, 1)->setText(line);
+        }
+        qDebug() << *processor->mainMemory;
+    }
+    file.close();
+}
+
 
 void MainWindow::textChanged(QTableWidgetItem *item)
 {
