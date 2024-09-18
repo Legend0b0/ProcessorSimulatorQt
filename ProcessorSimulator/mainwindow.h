@@ -55,10 +55,12 @@ private:
 
     QWidget *controlUnitLayoutWindow = nullptr;
     QWidget *dataPathLayoutWindow = nullptr;
+    QWidget *mainMemoryLayoutWindow = nullptr;
     QWidget *mainLayoutWindow = nullptr;
 
     QVBoxLayout *controlUnitLayout = nullptr;
     QVBoxLayout *dataPathLayout = nullptr;
+    QVBoxLayout *mainMemoryLayout = nullptr;
     QHBoxLayout *mainLayout = nullptr;
 
     Processor *processor = new Processor;
@@ -75,9 +77,7 @@ protected:
 
 public slots:
     void darkTheme();
-
-signals:
-    void textChanged(int index);
+    void textChanged(QTableWidgetItem *item);
 };
 
 #endif // MAINWINDOW_H

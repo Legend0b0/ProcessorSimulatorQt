@@ -70,8 +70,9 @@ void MainWindow::createMainMemory()
 
     this->tableMemory->horizontalHeader()->hide();
     this->tableMemory->verticalHeader()->hide();
-    this->tableMemory->setMaximumWidth(230);
-    this->tableMemory->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->tableMemory->setMaximumWidth(231);
+    this->tableMemory->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    //this->tableMemory->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     for(int i = 0; i < 32; i++)
     {
@@ -79,15 +80,14 @@ void MainWindow::createMainMemory()
         this->tableMemory->item(i, 0)->setBackground(QBrush(QColor(51,51,51)));
         this->tableMemory->item(i, 0)->setForeground(QBrush(QColor(255,255,255)));
         this->tableMemory->item(i, 0)->setFlags(Qt::ItemIsEnabled);
-        //this->tableMemory->item(i, 0)->setTextAlignment(Qt::AlignCenter);
 
         this->tableMemory->setItem(i, 1, new QTableWidgetItem("0"));
+        QObject::connect(this->tableMemory, &QTableWidget::itemChanged, this, &MainWindow::textChanged);
 
         this->tableMemory->setItem(i, 2, new QTableWidgetItem("Int"));
         this->tableMemory->item(i, 2)->setBackground(QBrush(QColor(51,51,51)));
         this->tableMemory->item(i, 2)->setForeground(QBrush(QColor(0,255,0)));
         this->tableMemory->item(i, 2)->setFlags(Qt::ItemIsEnabled);
-        //this->tableMemory->item(i, 2)->setTextAlignment(Qt::AlignCenter);
     }
 
     this->tableMemory->resizeColumnToContents(0);
@@ -98,10 +98,12 @@ void MainWindow::createLayouts()
 {
     this->controlUnitLayoutWindow = new QWidget;
     this->dataPathLayoutWindow = new QWidget;
+    this->mainMemoryLayoutWindow = new QWidget;
     this->mainLayoutWindow = new QWidget;
 
     this->controlUnitLayout = new QVBoxLayout(this->controlUnitLayoutWindow);
     this->dataPathLayout = new QVBoxLayout(this->dataPathLayoutWindow);
+    this->mainMemoryLayout = new QVBoxLayout(this->mainMemoryLayoutWindow);
     this->mainLayout = new QHBoxLayout(this->mainLayoutWindow);
 }
 
@@ -116,12 +118,18 @@ void MainWindow::settingLayouts()
     this->controlUnitScroll->setWidget(this->controlUnitLayoutWindow);
     this->dataPathScroll->setWidget(this->dataPathLayoutWindow);
 
+    this->mainMemoryLayout->addWidget(new QLabel("Main Memory"));
+    this->mainMemoryLayout->addWidget(new QPushButton("Input File"));
+    this->mainMemoryLayout->addWidget(this->tableMemory);
+    this->mainMemoryLayoutWindow->setFixedWidth(250);
+
+
     this->split->setChildrenCollapsible(false);
     this->split->addWidget(this->dataPathScroll);
     this->split->addWidget(this->controlUnitScroll);
 
     this->mainLayout->setAlignment(Qt::AlignCenter);
-    this->mainLayout->addWidget(this->tableMemory);
+    this->mainLayout->addWidget(this->mainMemoryLayoutWindow);
     this->mainLayout->addWidget(this->split);
 
     this->setCentralWidget(this->mainLayoutWindow);
@@ -142,6 +150,11 @@ void MainWindow::darkTheme()
     pal.setColor(QPalette::ButtonText, Qt::white);
     this->setAutoFillBackground(true);
     this->setPalette(pal);
+}
+
+void MainWindow::textChanged(QTableWidgetItem *item)
+{
+
 }
 
 void Processor::LOAD()
