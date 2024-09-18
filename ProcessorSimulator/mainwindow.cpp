@@ -21,28 +21,17 @@ MainWindow::~MainWindow()
 {
     delete this->split;
 
-    delete this->listMemory;
-
-    for(int i = 0; i < 32; i++)
-    {
-        delete this->positionLabel->at(i);
-        delete this->errorLabel->at(i);
-    }
-    delete this->positionLabel;
-    delete this->errorLabel;
+    delete this->tableMemory;
 
     delete this->controlUnitScroll;
     delete this->dataPathScroll;
-    delete this->mainMemoryScroll;
 
     delete this->controlUnitLayoutWindow;
     delete this->dataPathLayoutWindow;
-    delete this->mainMemoryLayoutWindow;
     delete this->mainLayoutWindow;
 
     delete this->controlUnitLayout;
     delete this->dataPathLayout;
-    delete this->mainMemoryLayout;
     delete this->mainLayout;
 
     delete this->processor->controlUnit;
@@ -73,40 +62,46 @@ void MainWindow::createWidgets()
 
     this->controlUnitScroll = new QScrollArea;
     this->dataPathScroll = new QScrollArea;
-    this->mainMemoryScroll = new QScrollArea;
 }
 
 void MainWindow::createMainMemory()
 {
-    this->positionLabel = new QVector<QLabel*>;
-    this->errorLabel = new QVector<QLabel*>;
-    this->listMemory = new QListWidget;
+    this->tableMemory = new QTableWidget(32, 3);
 
-    this->listMemory->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    this->listMemory->setMaximumWidth(300);
+    this->tableMemory->horizontalHeader()->hide();
+    this->tableMemory->verticalHeader()->hide();
+    this->tableMemory->setMaximumWidth(230);
+    this->tableMemory->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     for(int i = 0; i < 32; i++)
     {
-        this->positionLabel->insert(i, new QLabel(QString::number(i) + ":"));
+        this->tableMemory->setItem(i, 0, new QTableWidgetItem(QString::number(i) + ":"));
+        this->tableMemory->item(i, 0)->setBackground(QBrush(QColor(51,51,51)));
+        this->tableMemory->item(i, 0)->setForeground(QBrush(QColor(255,255,255)));
+        this->tableMemory->item(i, 0)->setFlags(Qt::ItemIsEnabled);
+        //this->tableMemory->item(i, 0)->setTextAlignment(Qt::AlignCenter);
 
-        this->listMemory->addItem(new QListWidgetItem("0"));
+        this->tableMemory->setItem(i, 1, new QTableWidgetItem("0"));
 
-        this->errorLabel->insert(i, new QLabel("Syntax Error"));
-        this->errorLabel->at(i)->setStyleSheet("QLabel { color : red; }");
+        this->tableMemory->setItem(i, 2, new QTableWidgetItem("Int"));
+        this->tableMemory->item(i, 2)->setBackground(QBrush(QColor(51,51,51)));
+        this->tableMemory->item(i, 2)->setForeground(QBrush(QColor(0,255,0)));
+        this->tableMemory->item(i, 2)->setFlags(Qt::ItemIsEnabled);
+        //this->tableMemory->item(i, 2)->setTextAlignment(Qt::AlignCenter);
     }
-    this->listMemory->setFont(QFont ("Courier", 15));
+
+    this->tableMemory->resizeColumnToContents(0);
+    this->tableMemory->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
 }
 
 void MainWindow::createLayouts()
 {
     this->controlUnitLayoutWindow = new QWidget;
     this->dataPathLayoutWindow = new QWidget;
-    this->mainMemoryLayoutWindow = new QWidget;
     this->mainLayoutWindow = new QWidget;
 
     this->controlUnitLayout = new QVBoxLayout(this->controlUnitLayoutWindow);
     this->dataPathLayout = new QVBoxLayout(this->dataPathLayoutWindow);
-    this->mainMemoryLayout = new QGridLayout(this->mainMemoryLayoutWindow);
     this->mainLayout = new QHBoxLayout(this->mainLayoutWindow);
 }
 
@@ -118,27 +113,15 @@ void MainWindow::settingLayouts()
     this->dataPathLayout->setAlignment(Qt::AlignCenter);
     this->dataPathLayout->addWidget(new QPushButton("B"));
 
-    this->mainMemoryLayout->setAlignment(Qt::AlignCenter);
-    this->mainMemoryLayout->setRowStretch(1, 1);
-    this->mainMemoryLayout->setColumnStretch(1, 1);
-    for(int i = 0; i < 32; i++)
-    {
-        this->mainMemoryLayout->addWidget(this->positionLabel->at(i), i, 0);
-        this->mainMemoryLayout->addWidget(this->errorLabel->at(i), i, 2);
-    }
-    this->mainMemoryLayout->addWidget(this->listMemory, 0, 1, 31, 1);
-
     this->controlUnitScroll->setWidget(this->controlUnitLayoutWindow);
     this->dataPathScroll->setWidget(this->dataPathLayoutWindow);
-    this->mainMemoryScroll->setWidget(this->mainMemoryLayoutWindow);
 
     this->split->setChildrenCollapsible(false);
     this->split->addWidget(this->dataPathScroll);
     this->split->addWidget(this->controlUnitScroll);
-    this->split->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     this->mainLayout->setAlignment(Qt::AlignCenter);
-    this->mainLayout->addWidget(this->mainMemoryScroll);
+    this->mainLayout->addWidget(this->tableMemory);
     this->mainLayout->addWidget(this->split);
 
     this->setCentralWidget(this->mainLayoutWindow);

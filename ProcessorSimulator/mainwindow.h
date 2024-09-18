@@ -13,7 +13,7 @@
 #include <QSizePolicy>
 #include <QLineEdit>
 #include <QLabel>
-#include <QListWidget>
+#include <QTableWidget>
 #include <QHeaderView>
 #include "controlunit.h"
 #include "datapath.h"
@@ -52,24 +52,18 @@ private:
 
     QScrollArea *controlUnitScroll = nullptr;
     QScrollArea *dataPathScroll = nullptr;
-    QScrollArea *mainMemoryScroll = nullptr;
 
     QWidget *controlUnitLayoutWindow = nullptr;
     QWidget *dataPathLayoutWindow = nullptr;
-    QWidget *mainMemoryLayoutWindow = nullptr;
     QWidget *mainLayoutWindow = nullptr;
 
     QVBoxLayout *controlUnitLayout = nullptr;
     QVBoxLayout *dataPathLayout = nullptr;
-    QGridLayout *mainMemoryLayout = nullptr;
     QHBoxLayout *mainLayout = nullptr;
 
     Processor *processor = new Processor;
 
-    QVector<QLabel*> *positionLabel = nullptr;
-    QVector<QLabel*> *errorLabel = nullptr;
-
-    QListWidget *listMemory = nullptr;
+    QTableWidget *tableMemory = nullptr;
 
 protected:
     void configureWindow();
