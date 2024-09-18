@@ -13,6 +13,8 @@
 #include <QSizePolicy>
 #include <QLineEdit>
 #include <QLabel>
+#include <QListWidget>
+#include <QHeaderView>
 #include "controlunit.h"
 #include "datapath.h"
 
@@ -23,7 +25,6 @@ public:
     DataPath *dataPath = new DataPath;
     QStringList *mainMemory = new QStringList;
 
-protected:
     void LOAD();
     void STORE();
     void MOVE();
@@ -47,8 +48,7 @@ public:
     ~MainWindow();
 
 private:
-    QSplitter *split1 = nullptr;
-    QSplitter *split2 = nullptr;
+    QSplitter *split = nullptr;
 
     QScrollArea *controlUnitScroll = nullptr;
     QScrollArea *dataPathScroll = nullptr;
@@ -56,22 +56,20 @@ private:
 
     QWidget *controlUnitLayoutWindow = nullptr;
     QWidget *dataPathLayoutWindow = nullptr;
-    QWidget *mainMemoryAuxLayoutWindow = nullptr;
     QWidget *mainMemoryLayoutWindow = nullptr;
-    QWidget *containerLayoutWindow = nullptr;
     QWidget *mainLayoutWindow = nullptr;
 
     QVBoxLayout *controlUnitLayout = nullptr;
     QVBoxLayout *dataPathLayout = nullptr;
-    QHBoxLayout *mainMemoryAuxLayout = nullptr;
     QGridLayout *mainMemoryLayout = nullptr;
-    QHBoxLayout *containerLayout = nullptr;
     QHBoxLayout *mainLayout = nullptr;
 
     Processor *processor = new Processor;
 
     QVector<QLabel*> *positionLabel = nullptr;
-    QVector<QLineEdit*> *lineMemory = nullptr;
+    QVector<QLabel*> *errorLabel = nullptr;
+
+    QListWidget *listMemory = nullptr;
 
 protected:
     void configureWindow();
@@ -83,6 +81,9 @@ protected:
 
 public slots:
     void darkTheme();
+
+signals:
+    void textChanged(int index);
 };
 
 #endif // MAINWINDOW_H

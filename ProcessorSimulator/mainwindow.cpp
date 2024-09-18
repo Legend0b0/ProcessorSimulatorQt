@@ -13,20 +13,23 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->settingLayouts();
 
     this->iniciateMemory();
+
+    this->resize(1200, 800);
 }
 
 MainWindow::~MainWindow()
 {
-    delete this->split1;
-    delete this->split2;
+    delete this->split;
+
+    delete this->listMemory;
 
     for(int i = 0; i < 32; i++)
     {
         delete this->positionLabel->at(i);
-        delete this->lineMemory->at(i);
+        delete this->errorLabel->at(i);
     }
     delete this->positionLabel;
-    delete this->lineMemory;
+    delete this->errorLabel;
 
     delete this->controlUnitScroll;
     delete this->dataPathScroll;
@@ -34,16 +37,12 @@ MainWindow::~MainWindow()
 
     delete this->controlUnitLayoutWindow;
     delete this->dataPathLayoutWindow;
-    delete this->mainMemoryAuxLayoutWindow;
     delete this->mainMemoryLayoutWindow;
-    delete this->containerLayoutWindow;
     delete this->mainLayoutWindow;
 
     delete this->controlUnitLayout;
     delete this->dataPathLayout;
-    delete this->mainMemoryAuxLayout;
     delete this->mainMemoryLayout;
-    delete this->containerLayout;
     delete this->mainLayout;
 
     delete this->processor->controlUnit;
@@ -70,8 +69,7 @@ void MainWindow::configureWindow()
 
 void MainWindow::createWidgets()
 {
-    this->split1 = new QSplitter(Qt::Vertical);
-    this->split2 = new QSplitter(Qt::Horizontal);
+    this->split = new QSplitter(Qt::Vertical);
 
     this->controlUnitScroll = new QScrollArea;
     this->dataPathScroll = new QScrollArea;
@@ -80,35 +78,35 @@ void MainWindow::createWidgets()
 
 void MainWindow::createMainMemory()
 {
-    this->lineMemory = new QVector<QLineEdit*>;
-
-    for(int i = 0; i < 32; i++)
-    {
-        this->lineMemory->insert(i, new QLineEdit("0"));
-    }
-
     this->positionLabel = new QVector<QLabel*>;
+    this->errorLabel = new QVector<QLabel*>;
+    this->listMemory = new QListWidget;
+
+    this->listMemory->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    this->listMemory->setMaximumWidth(300);
 
     for(int i = 0; i < 32; i++)
     {
         this->positionLabel->insert(i, new QLabel(QString::number(i) + ":"));
+
+        this->listMemory->addItem(new QListWidgetItem("0"));
+
+        this->errorLabel->insert(i, new QLabel("Syntax Error"));
+        this->errorLabel->at(i)->setStyleSheet("QLabel { color : red; }");
     }
+    this->listMemory->setFont(QFont ("Courier", 15));
 }
 
 void MainWindow::createLayouts()
 {
     this->controlUnitLayoutWindow = new QWidget;
     this->dataPathLayoutWindow = new QWidget;
-    this->mainMemoryAuxLayoutWindow = new QWidget;
     this->mainMemoryLayoutWindow = new QWidget;
-    this->containerLayoutWindow = new QWidget;
     this->mainLayoutWindow = new QWidget;
 
     this->controlUnitLayout = new QVBoxLayout(this->controlUnitLayoutWindow);
     this->dataPathLayout = new QVBoxLayout(this->dataPathLayoutWindow);
-    this->mainMemoryAuxLayout = new QHBoxLayout(this->mainMemoryAuxLayoutWindow);
     this->mainMemoryLayout = new QGridLayout(this->mainMemoryLayoutWindow);
-    this->containerLayout = new QHBoxLayout(this->containerLayoutWindow);
     this->mainLayout = new QHBoxLayout(this->mainLayoutWindow);
 }
 
@@ -126,34 +124,24 @@ void MainWindow::settingLayouts()
     for(int i = 0; i < 32; i++)
     {
         this->mainMemoryLayout->addWidget(this->positionLabel->at(i), i, 0);
-        this->mainMemoryLayout->addWidget(this->lineMemory->at(i), i, 1);
+        this->mainMemoryLayout->addWidget(this->errorLabel->at(i), i, 2);
     }
-    this->mainMemoryAuxLayout->setAlignment(Qt::AlignCenter);
-    this->mainMemoryAuxLayout->addWidget(this->mainMemoryLayoutWindow);
+    this->mainMemoryLayout->addWidget(this->listMemory, 0, 1, 31, 1);
 
     this->controlUnitScroll->setWidget(this->controlUnitLayoutWindow);
     this->dataPathScroll->setWidget(this->dataPathLayoutWindow);
-    this->mainMemoryScroll->setWidget(this->mainMemoryAuxLayoutWindow);
+    this->mainMemoryScroll->setWidget(this->mainMemoryLayoutWindow);
 
-    this->split1->setChildrenCollapsible(false);
-    this->split1->addWidget(this->controlUnitScroll);
-    this->split1->addWidget(this->mainMemoryScroll);
-
-    this->containerLayout->setContentsMargins(0, 0, 0, 0);
-    this->containerLayout->addWidget(this->split1);
-
-    this->split2->setChildrenCollapsible(false);
-    this->split2->addWidget(this->containerLayoutWindow);
-    this->split2->addWidget(this->dataPathScroll);
+    this->split->setChildrenCollapsible(false);
+    this->split->addWidget(this->dataPathScroll);
+    this->split->addWidget(this->controlUnitScroll);
+    this->split->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     this->mainLayout->setAlignment(Qt::AlignCenter);
-    this->mainLayout->addWidget(this->split2);
+    this->mainLayout->addWidget(this->mainMemoryScroll);
+    this->mainLayout->addWidget(this->split);
 
     this->setCentralWidget(this->mainLayoutWindow);
-
-    this->split1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    this->split2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
 }
 
 void MainWindow::iniciateMemory()
