@@ -12,12 +12,14 @@ SOURCES += \
     controlunit.cpp \
     datapath.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    processor.cpp
 
 HEADERS += \
     controlunit.h \
     datapath.h \
-    mainwindow.h
+    mainwindow.h \
+    processor.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

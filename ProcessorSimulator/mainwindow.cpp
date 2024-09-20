@@ -25,26 +25,22 @@ MainWindow::~MainWindow()
 
     delete this->tableMemory;
 
-    delete this->processor->controlUnit;
-    delete this->processor->dataPath;
-    delete this->processor->mainMemory;
     delete this->processor;
 
     delete this->controlUnitLayout;
     delete this->controlUnitLayoutWindow;
     delete this->controlUnitScroll;
 
-    // delete this->dataPathLayout;
-    // delete this->dataPathLayoutWindow;
-    // delete this->dataPathScroll;
+    delete this->dataPathLayout;
+    delete this->dataPathLayoutWindow;
+    delete this->dataPathScroll;
 
-    // delete this->mainMemoryLayoutWindow;
-    // delete this->mainLayoutWindow;
-    // delete this->mainMemoryLayout;
+    delete this->mainMemoryLayoutWindow;
+    delete this->mainLayoutWindow;
 
-    // delete this->split;
-
-    // delete this->mainLayout;
+    //delete this->mainMemoryLayout;
+    //delete this->split;
+    //delete this->mainLayout;
 }
 
 void MainWindow::configureWindow()
@@ -58,8 +54,6 @@ void MainWindow::configureWindow()
     this->setGeometry((screenWidth/2)-(this->width()/2), (screenHeight/2)-(this->height()/2), this->width(), this->height());
 
     this->darkTheme();
-
-    QObject::connect(this, &MainWindow::sintaxeMemoryThrow, this, &MainWindow::sintaxeMemoryCatch);
 }
 
 void MainWindow::createWidgets()
@@ -78,9 +72,6 @@ void MainWindow::createWidgets()
     this->createTableMemory();
 
     this->processor = new Processor;
-    this->processor->controlUnit = new ControlUnit;
-    this->processor->dataPath = new DataPath;
-    this->processor->mainMemory = new QStringList;
 }
 
 void MainWindow::createTableMemory()
@@ -113,7 +104,6 @@ void MainWindow::createTableMemory()
     this->tableMemory->item(31, 1)->setText("0");
 
     this->tableMemory->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-    QObject::connect(this->tableMemory, &QTableWidget::itemChanged, this, &MainWindow::textChanged);
 }
 
 void MainWindow::createLayouts()
@@ -169,7 +159,9 @@ void MainWindow::iniciateMemory()
 
 void MainWindow::connectButons()
 {
-    QObject::connect(this->file_button, &QPushButton::clicked, this, &MainWindow::Readfile);
+    QObject::connect(this->file_button, &QPushButton::clicked, this, &MainWindow::readFile);
+    QObject::connect(this, &MainWindow::sintaxeMemoryThrow, this, &MainWindow::sintaxeMemoryCatch);
+    QObject::connect(this->tableMemory, &QTableWidget::itemChanged, this, &MainWindow::textChanged);
 }
 
 void MainWindow::verifyInstruction(QTableWidgetItem *item)
@@ -200,7 +192,7 @@ void MainWindow::darkTheme()
     this->setPalette(pal);
 }
 
-void MainWindow::Readfile()
+void MainWindow::readFile()
 {
     QString filename = QFileDialog::getOpenFileName(this, tr("Abrir ficheiro"),QDir::currentPath(), tr("Text files (*.txt)"));
     file.setFileName(filename);
@@ -283,9 +275,9 @@ void MainWindow::textChanged(QTableWidgetItem *item)
     return;
 }
 
-void MainWindow::sintaxeMemoryCatch(int i, int sintax)
+void MainWindow::sintaxeMemoryCatch(int i, int signal)
 {
-    switch (sintax)
+    switch(signal)
     {
         case 0:
         {
@@ -293,7 +285,6 @@ void MainWindow::sintaxeMemoryCatch(int i, int sintax)
             this->tableMemory->item(i, 2)->setForeground(QBrush(QColor(255, 255, 255)));
             break;
         }
-
         case 1:
         {
             this->tableMemory->item(i, 2)->setText("Instruction");
@@ -311,64 +302,4 @@ void MainWindow::sintaxeMemoryCatch(int i, int sintax)
             break;
         }
     }
-}
-
-void Processor::LOAD()
-{
-
-}
-
-void Processor::STORE()
-{
-
-}
-
-void Processor::MOVE()
-{
-
-}
-
-void Processor::ADD()
-{
-
-}
-
-void Processor::SUB()
-{
-
-}
-
-void Processor::AND()
-{
-
-}
-
-void Processor::OR()
-{
-
-}
-
-void Processor::BRANCH()
-{
-
-}
-
-void Processor::BZERO()
-{
-
-}
-
-void Processor::BNEG()
-{
-
-}
-
-void Processor::NOP()
-{
-
-}
-
-void Processor::HALT()
-{
-
 }

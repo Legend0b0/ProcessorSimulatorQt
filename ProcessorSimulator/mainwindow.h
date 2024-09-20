@@ -22,29 +22,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QLineEdit>
-#include "controlunit.h"
-#include "datapath.h"
-
-class Processor
-{
-public:
-    ControlUnit *controlUnit = nullptr;
-    DataPath *dataPath = nullptr;
-    QStringList *mainMemory = nullptr;
-
-    void LOAD();
-    void STORE();
-    void MOVE();
-    void ADD();
-    void SUB();
-    void AND();
-    void OR();
-    void BRANCH();
-    void BZERO();
-    void BNEG();
-    void NOP();
-    void HALT();
-};
+#include "processor.h"
 
 class MainWindow : public QMainWindow
 {
@@ -96,12 +74,12 @@ protected:
 
 public slots:
     void darkTheme();
-    void Readfile();
+    void readFile();
     void textChanged(QTableWidgetItem *item);
-    void sintaxeMemoryCatch(int i, int sintax);
+    void sintaxeMemoryCatch(int i, int signal);
 
 signals:
-    void sintaxeMemoryThrow(int i, int sintax);
+    void sintaxeMemoryThrow(int i, int signal);
 };
 
 #endif // MAINWINDOW_H
