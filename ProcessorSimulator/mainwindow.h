@@ -72,6 +72,7 @@ private:
     QPushButton *PC_button = nullptr;
 
     QFile *file = nullptr;
+    QFile *file_RamMemory = nullptr;
 
     QSplitter *split = nullptr;
 

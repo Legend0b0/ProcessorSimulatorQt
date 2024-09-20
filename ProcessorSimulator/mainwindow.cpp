@@ -57,6 +57,9 @@ MainWindow::~MainWindow()
     delete this->file_button;
     delete this->PC_button;
 
+    delete this->file;
+    delete this->file_RamMemory;
+
     delete this->tableMemory;
 
     delete this->processor;
@@ -138,6 +141,7 @@ void MainWindow::createWidgets()
     this->PC_button = new QPushButton("Reset");
 
     this->file = new QFile;
+    this->file_RamMemory = new QFile;
 
     this->createTableMemory();
 
@@ -151,6 +155,8 @@ void MainWindow::createWidgets()
 
 void MainWindow::configureWidgets()
 {
+    QDir::setCurrent("../..");
+
     this->microInstruction_label->setAlignment(Qt::AlignCenter);
     this->PC_label->setAlignment(Qt::AlignCenter);
     this->IR_label->setAlignment(Qt::AlignCenter);
@@ -354,28 +360,45 @@ void MainWindow::darkTheme()
 void MainWindow::readFile()
 {
     QString filename = QFileDialog::getOpenFileName(this, tr("Abrir ficheiro"),QDir::currentPath(), tr("Text files (*.txt)"));
-    this->file->setFileName(filename);
 
-    if(!this->file->open(QIODevice::ReadOnly | QIODevice::Text))
+    file->setFileName(filename);
+    file_RamMemory->setFileName("memoria_ram.txt");
+
+    if(!file_RamMemory->open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        return;
+    }
+    if(!file->open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QMessageBox::information(this,"Error","File not found");
         return;
     }
 
+    QString line;
+    QTextStream out(file_RamMemory);
     QTextStream in(file);
+
     for(int i=0; !in.atEnd(); i++)
     {
-        QString line = in.readLine();
+        if(i > 31)
+        {
+            break;
+        }
+
+        line = in.readLine();
         if(line.isNull())
         {
             break;
         }
         else
         {
-            this->tableMemory->item(i, 1)->setText(line);
+            out << line << "\n";
+            tableMemory->item(i, 1)->setText(line);
         }
     }
-    this->file->close();
+
+    file->close();
+    file_RamMemory->close();
 }
 
 void MainWindow::textChanged(QTableWidgetItem *item)
