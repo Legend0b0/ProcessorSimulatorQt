@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>img/ArrowBBot.png</file>
+        <file>img/ArrowBLeft.png</file>
+        <file>img/ArrowBRight.png</file>
+        <file>img/ArrowBTop.png</file>
+        <file>img/ArrowRBot.png</file>
+        <file>img/ArrowRLeft.png</file>
+        <file>img/ArrowRRight.png</file>
+        <file>img/ArrowRTop.png</file>
+    </qresource>
+</RCC>

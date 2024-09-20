@@ -3,12 +3,15 @@
 
 #include <QMainWindow>
 
-class ULA
+class ALU
 {
 public:
-    int A = 0;
-    int B = 0;
-    int C = 0;
+    ALU();
+    ~ALU();
+
+    int *A = nullptr;
+    int *B = nullptr;
+    int *C = nullptr;
 
 public slots:
     void operationAdd();
@@ -21,18 +24,20 @@ class DataPath
 {
 public:
     DataPath();
-    int R0 = 0;
-    int R1 = 0;
-    int R2 = 0;
-    int R3 = 0;
+    ~DataPath();
 
-    int ABus = 0;
-    int BBus = 0;
-    int CBus = 0;
+    int *R0 = nullptr;
+    int *R1 = nullptr;
+    int *R2 = nullptr;
+    int *R3 = nullptr;
 
-    int MainMemoryBus = 0;
+    int *ABus = nullptr;
+    int *BBus = nullptr;
+    int *CBus = nullptr;
 
-    ULA ula;
+    int *MainMemoryBus = nullptr;
+
+    ALU *alu = nullptr;
 };
 
 #endif // DATAPATH_H

@@ -6,27 +6,67 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     this->createWidgets();
 
+    this->configureWidgets();
+
     this->createLayouts();
 
     this->settingLayouts();
 
     this->iniciateMemory();
 
-    this->connectButons();
+    this->connects();
 }
 
 MainWindow::~MainWindow()
 {
-    delete this->control_button;
-    delete this->data_button;
-    delete this->file_button;
+    delete this->microInstruction_label;
+    delete this->PC_label;
+    delete this->IR_label;
+    delete this->AAddr_label;
+    delete this->BAddr_label;
+    delete this->AluOp_label;
+    delete this->SwitchPos_label;
+    delete this->CAddr_label;
+    delete this->RWAddr_label;
 
+    delete this->arrowIRToPC;
+    delete this->arrowIRToMIR;
+
+    delete this->controlUnit_label;
+    delete this->dataPath_label;
     delete this->memory_label;
+
+    delete this->arrowBTop;
+    delete this->arrowBBot;
+    delete this->arrowBRight;
+    delete this->arrowBLeft;
+    delete this->arrowRTop;
+    delete this->arrowRBot;
+    delete this->arrowRRight;
+    delete this->arrowRLeft;
+
+    delete this->PC_lineEdit;
+    delete this->IR_lineEdit;
+    delete this->AAddr_lineEdit;
+    delete this->BAddr_lineEdit;
+    delete this->AluOp_lineEdit;
+    delete this->SwitchPos_lineEdit;
+    delete this->CAddr_lineEdit;
+    delete this->RWAddr_lineEdit;
+
+    delete this->file_button;
+    delete this->PC_button;
 
     delete this->tableMemory;
 
     delete this->processor;
 
+    delete this->microInstructionLayout;
+    delete this->microInstructionLayoutWindow;
+    delete this->irLayout;
+    delete this->irLayoutWindow;
+    delete this->pcLayout;
+    delete this->pcLayoutWindow;
     delete this->controlUnitLayout;
     delete this->controlUnitLayoutWindow;
     delete this->controlUnitScroll;
@@ -35,12 +75,13 @@ MainWindow::~MainWindow()
     delete this->dataPathLayoutWindow;
     delete this->dataPathScroll;
 
+    delete this->mainMemoryLayout;
     delete this->mainMemoryLayoutWindow;
-    delete this->mainLayoutWindow;
 
-    //delete this->mainMemoryLayout;
-    //delete this->split;
-    //delete this->mainLayout;
+    delete this->split;
+
+    delete this->mainLayout;
+    delete this->mainLayoutWindow;
 }
 
 void MainWindow::configureWindow()
@@ -58,20 +99,95 @@ void MainWindow::configureWindow()
 
 void MainWindow::createWidgets()
 {
-    this->control_button = new QPushButton("Control Unit");
-    this->data_button = new QPushButton("Data Path");
-    this->file_button = new QPushButton("Input File");
+    this->microInstruction_label = new QLabel("Micro Instruction Register");
+    this->PC_label = new QLabel("PC:");
+    this->IR_label = new QLabel("IR:");
+    this->AAddr_label = new QLabel("A Addr:");
+    this->BAddr_label = new QLabel("B Addr:");
+    this->AluOp_label = new QLabel("Alu Op:");
+    this->SwitchPos_label = new QLabel("Switch Pos:");
+    this->CAddr_label = new QLabel("C Addr:");
+    this->RWAddr_label = new QLabel("RW Addr:");
 
+    this->arrowIRToPC = new QLabel;
+    this->arrowIRToMIR = new QLabel;
+
+    this->controlUnit_label = new QLabel("Control Unit");
+    this->dataPath_label = new QLabel("Data Path");
     this->memory_label = new QLabel("Main Memory");
 
-    this->split = new QSplitter(Qt::Vertical);
+    this->arrowBTop = new QPixmap(":/img/ArrowBTop.png");
+    this->arrowBBot = new QPixmap(":/img/ArrowBBot.png");
+    this->arrowBRight = new QPixmap(":/img/ArrowBRight.png");
+    this->arrowBLeft = new QPixmap(":/img/ArrowBLeft.png");
+    this->arrowRTop = new QPixmap(":/img/ArrowRTop.png");
+    this->arrowRBot = new QPixmap(":/img/ArrowRBot.png");
+    this->arrowRRight = new QPixmap(":/img/ArrowRRight.png");
+    this->arrowRLeft = new QPixmap(":/img/ArrowRLeft.png");
 
-    this->controlUnitScroll = new QScrollArea;
-    this->dataPathScroll = new QScrollArea;
+    this->PC_lineEdit = new QLineEdit("0");
+    this->IR_lineEdit = new QLineEdit("");
+    this->AAddr_lineEdit = new QLineEdit("00");
+    this->BAddr_lineEdit = new QLineEdit("00");
+    this->AluOp_lineEdit = new QLineEdit("00");
+    this->SwitchPos_lineEdit = new QLineEdit("0000");
+    this->CAddr_lineEdit = new QLineEdit("00");
+    this->RWAddr_lineEdit = new QLineEdit("00000");
+
+    this->file_button = new QPushButton("Input File");
+    this->PC_button = new QPushButton("Reset");
+
+    this->file = new QFile;
 
     this->createTableMemory();
 
     this->processor = new Processor;
+
+    this->controlUnitScroll = new QScrollArea;
+    this->dataPathScroll = new QScrollArea;
+
+    this->split = new QSplitter(Qt::Vertical);
+}
+
+void MainWindow::configureWidgets()
+{
+    this->microInstruction_label->setAlignment(Qt::AlignCenter);
+    this->PC_label->setAlignment(Qt::AlignCenter);
+    this->IR_label->setAlignment(Qt::AlignCenter);
+    this->AAddr_label->setAlignment(Qt::AlignCenter);
+    this->BAddr_label->setAlignment(Qt::AlignCenter);
+    this->AluOp_label->setAlignment(Qt::AlignCenter);
+    this->SwitchPos_label->setAlignment(Qt::AlignCenter);
+    this->CAddr_label->setAlignment(Qt::AlignCenter);
+    this->RWAddr_label->setAlignment(Qt::AlignCenter);
+
+    this->arrowIRToPC->setPixmap(arrowBLeft->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowIRToMIR->setPixmap(arrowBTop->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowIRToMIR->setAlignment(Qt::AlignRight);
+
+    this->controlUnit_label->setAlignment(Qt::AlignCenter);
+    this->dataPath_label->setAlignment(Qt::AlignCenter);
+    this->memory_label->setAlignment(Qt::AlignCenter);
+
+    this->PC_lineEdit->setAlignment(Qt::AlignCenter);
+    this->IR_lineEdit->setAlignment(Qt::AlignCenter);
+    this->AAddr_lineEdit->setAlignment(Qt::AlignCenter);
+    this->BAddr_lineEdit->setAlignment(Qt::AlignCenter);
+    this->AluOp_lineEdit->setAlignment(Qt::AlignCenter);
+    this->SwitchPos_lineEdit->setAlignment(Qt::AlignCenter);
+    this->CAddr_lineEdit->setAlignment(Qt::AlignCenter);
+    this->RWAddr_lineEdit->setAlignment(Qt::AlignCenter);
+
+    this->PC_lineEdit->setFixedWidth(50);
+    this->IR_lineEdit->setFixedWidth(150);
+    this->AAddr_lineEdit->setFixedWidth(50);
+    this->BAddr_lineEdit->setFixedWidth(50);
+    this->AluOp_lineEdit->setFixedWidth(50);
+    this->SwitchPos_lineEdit->setFixedWidth(80);
+    this->CAddr_lineEdit->setFixedWidth(50);
+    this->RWAddr_lineEdit->setFixedWidth(80);
+
+    this->PC_button->setFixedWidth(60);
 }
 
 void MainWindow::createTableMemory()
@@ -108,36 +224,81 @@ void MainWindow::createTableMemory()
 
 void MainWindow::createLayouts()
 {
+    // Layouts Widgets
+    this->microInstructionLayoutWindow = new QWidget;
+    this->pcirLayoutWindow = new QWidget;
+    this->pcLayoutWindow = new QWidget;
+    this->irLayoutWindow = new QWidget;
     this->controlUnitLayoutWindow = new QWidget;
+
     this->dataPathLayoutWindow = new QWidget;
-    this->mainMemoryAuxLayoutWindow = new QWidget;
+
     this->mainMemoryLayoutWindow = new QWidget;
+
     this->mainLayoutWindow = new QWidget;
 
+    // Layouts
+    this->microInstructionLayout = new QGridLayout(this->microInstructionLayoutWindow);
+    this->pcirLayout = new QHBoxLayout(this->pcirLayoutWindow);
+    this->pcLayout = new QHBoxLayout(this->pcLayoutWindow);
+    this->irLayout = new QHBoxLayout(this->irLayoutWindow);
     this->controlUnitLayout = new QVBoxLayout(this->controlUnitLayoutWindow);
+
     this->dataPathLayout = new QVBoxLayout(this->dataPathLayoutWindow);
-    this->mainMemoryAuxLayout = new QHBoxLayout(this->mainMemoryAuxLayoutWindow);
+
     this->mainMemoryLayout = new QVBoxLayout(this->mainMemoryLayoutWindow);
+
     this->mainLayout = new QHBoxLayout(this->mainLayoutWindow);
 }
 
 void MainWindow::settingLayouts()
 {
-    this->controlUnitLayout->setAlignment(Qt::AlignCenter);
-    this->controlUnitLayout->addWidget(control_button);
+    this->pcLayout->addWidget(this->PC_label);
+    this->pcLayout->addWidget(this->PC_lineEdit);
+    this->pcLayout->addWidget(this->PC_button);
 
+    this->irLayout->addWidget(this->IR_label);
+    this->irLayout->addWidget(this->IR_lineEdit);
+
+    this->pcirLayout->addWidget(this->pcLayoutWindow);
+    this->pcirLayout->addSpacing(10);
+    this->pcirLayout->addWidget(this->arrowIRToPC);
+    this->pcirLayout->addSpacing(10);
+    this->pcirLayout->addWidget(this->irLayoutWindow);
+    this->pcirLayout->setAlignment(Qt::AlignCenter);
+
+    this->microInstructionLayout->addWidget(this->AAddr_label, 0, 0);
+    this->microInstructionLayout->addWidget(this->BAddr_label, 0, 1);
+    this->microInstructionLayout->addWidget(this->AluOp_label, 0, 2);
+    this->microInstructionLayout->addWidget(this->SwitchPos_label, 0, 3);
+    this->microInstructionLayout->addWidget(this->CAddr_label, 0, 4);
+    this->microInstructionLayout->addWidget(this->RWAddr_label, 0, 5);
+    this->microInstructionLayout->addWidget(this->AAddr_lineEdit, 1, 0);
+    this->microInstructionLayout->addWidget(this->BAddr_lineEdit, 1, 1);
+    this->microInstructionLayout->addWidget(this->AluOp_lineEdit, 1, 2);
+    this->microInstructionLayout->addWidget(this->SwitchPos_lineEdit, 1, 3);
+    this->microInstructionLayout->addWidget(this->CAddr_lineEdit, 1, 4);
+    this->microInstructionLayout->addWidget(this->RWAddr_lineEdit, 1, 5);
+    this->microInstructionLayout->setAlignment(Qt::AlignCenter);
+
+    this->controlUnitLayout->addWidget(this->controlUnit_label);
+    this->controlUnitLayout->addSpacing(50);
+    this->controlUnitLayout->addWidget(this->microInstruction_label);
+    this->controlUnitLayout->addWidget(this->microInstructionLayoutWindow);
+    this->controlUnitLayout->addWidget(this->arrowIRToMIR);
+    this->controlUnitLayout->addWidget(this->pcirLayoutWindow);
+    this->controlUnitLayout->setAlignment(Qt::AlignCenter);
+
+    this->dataPathLayout->addWidget(this->dataPath_label);
     this->dataPathLayout->setAlignment(Qt::AlignCenter);
-    this->dataPathLayout->addWidget(data_button);
 
     this->controlUnitScroll->setWidget(this->controlUnitLayoutWindow);
+    this->controlUnitScroll->setAlignment(Qt::AlignCenter);
     this->dataPathScroll->setWidget(this->dataPathLayoutWindow);
+    this->dataPathScroll->setAlignment(Qt::AlignCenter);
 
-    this->mainMemoryAuxLayout->addStretch(1);
-    this->mainMemoryAuxLayout->addWidget(memory_label);
-    this->mainMemoryAuxLayout->addStretch(1);
-
-    this->mainMemoryLayout->addWidget(mainMemoryAuxLayoutWindow);
-    this->mainMemoryLayout->addWidget(file_button);
+    this->mainMemoryLayout->addWidget(this->memory_label);
+    this->mainMemoryLayout->addWidget(this->file_button);
     this->mainMemoryLayout->addWidget(this->tableMemory);
     this->mainMemoryLayoutWindow->setFixedWidth(270);
 
@@ -145,7 +306,6 @@ void MainWindow::settingLayouts()
     this->split->addWidget(this->dataPathScroll);
     this->split->addWidget(this->controlUnitScroll);
 
-    this->mainLayout->setAlignment(Qt::AlignCenter);
     this->mainLayout->addWidget(this->mainMemoryLayoutWindow);
     this->mainLayout->addWidget(this->split);
 
@@ -157,10 +317,10 @@ void MainWindow::iniciateMemory()
     this->processor->mainMemory->fill("0", 32);
 }
 
-void MainWindow::connectButons()
+void MainWindow::connects()
 {
-    QObject::connect(this->file_button, &QPushButton::clicked, this, &MainWindow::readFile);
     QObject::connect(this, &MainWindow::sintaxeMemoryThrow, this, &MainWindow::sintaxeMemoryCatch);
+    QObject::connect(this->file_button, &QPushButton::clicked, this, &MainWindow::readFile);
     QObject::connect(this->tableMemory, &QTableWidget::itemChanged, this, &MainWindow::textChanged);
 }
 
@@ -182,7 +342,6 @@ void MainWindow::verifyInstruction(QTableWidgetItem *item)
 
 void MainWindow::darkTheme()
 {
-    // Dark Theme
     QPalette pal = this->palette();
     pal.setColor(QPalette::Window, QColor(51, 51, 51));
     pal.setColor(QPalette::WindowText, Qt::white);
@@ -195,15 +354,15 @@ void MainWindow::darkTheme()
 void MainWindow::readFile()
 {
     QString filename = QFileDialog::getOpenFileName(this, tr("Abrir ficheiro"),QDir::currentPath(), tr("Text files (*.txt)"));
-    file.setFileName(filename);
+    this->file->setFileName(filename);
 
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if(!this->file->open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QMessageBox::information(this,"Error","File not found");
         return;
     }
 
-    QTextStream in(&file);
+    QTextStream in(file);
     for(int i=0; !in.atEnd(); i++)
     {
         QString line = in.readLine();
@@ -213,10 +372,10 @@ void MainWindow::readFile()
         }
         else
         {
-            tableMemory->item(i, 1)->setText(line);
+            this->tableMemory->item(i, 1)->setText(line);
         }
     }
-    file.close();
+    this->file->close();
 }
 
 void MainWindow::textChanged(QTableWidgetItem *item)

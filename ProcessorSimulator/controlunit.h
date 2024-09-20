@@ -7,16 +7,17 @@ class ControlUnit
 {
 public:
     ControlUnit();
+    ~ControlUnit();
 
-    int PC = 0;
-    QString IR = "";
+    int *PC = nullptr;
+    QString *IR = nullptr;
 
-    int AAddr = 00;
-    int BAddr = 00;
-    int UlaOp = 00;
-    int SwitchPos = 0000;
-    int CAddr = 00;
-    int RWAddr = 00000;
+    int *AAddr = nullptr;
+    int *BAddr = nullptr;
+    int *UlaOp = nullptr;
+    int *SwitchPos = nullptr;
+    int *CAddr = nullptr;
+    int *RWAddr = nullptr;
 };
 
 #endif // CONTROLUNIT_H
