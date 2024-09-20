@@ -15,23 +15,22 @@
 #include <QLabel>
 #include <QTableWidget>
 #include <QHeaderView>
-
+#include <QRegularExpression>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QIODevice>
 #include <QFile>
 #include <QTextStream>
 #include <QLineEdit>
-
 #include "controlunit.h"
 #include "datapath.h"
 
 class Processor
 {
 public:
-    ControlUnit *controlUnit = new ControlUnit;
-    DataPath *dataPath = new DataPath;
-    QStringList *mainMemory = new QStringList;
+    ControlUnit *controlUnit = nullptr;
+    DataPath *dataPath = nullptr;
+    QStringList *mainMemory = nullptr;
 
     void LOAD();
     void STORE();
@@ -57,9 +56,12 @@ public:
 
     QFile file;
 
-
 private:
-    QPushButton *file_buton = new QPushButton("Input File");
+    QPushButton *data_button = nullptr;
+    QPushButton *control_button = nullptr;
+    QPushButton *file_button = nullptr;
+
+    QLabel *memory_label = nullptr;
 
     QSplitter *split = nullptr;
 
@@ -68,31 +70,38 @@ private:
 
     QWidget *controlUnitLayoutWindow = nullptr;
     QWidget *dataPathLayoutWindow = nullptr;
+    QWidget *mainMemoryAuxLayoutWindow = nullptr;
     QWidget *mainMemoryLayoutWindow = nullptr;
     QWidget *mainLayoutWindow = nullptr;
 
     QVBoxLayout *controlUnitLayout = nullptr;
     QVBoxLayout *dataPathLayout = nullptr;
+    QHBoxLayout *mainMemoryAuxLayout = nullptr;
     QVBoxLayout *mainMemoryLayout = nullptr;
     QHBoxLayout *mainLayout = nullptr;
 
-    Processor *processor = new Processor;
+    Processor *processor = nullptr;
 
     QTableWidget *tableMemory = nullptr;
 
 protected:
     void configureWindow();
     void createWidgets();
-    void createMainMemory();
+    void createTableMemory();
     void createLayouts();
     void settingLayouts();
     void iniciateMemory();
     void connectButons();
+    void verifyInstruction(QTableWidgetItem *item);
 
 public slots:
     void darkTheme();
-    void textChanged(QTableWidgetItem *item);
     void Readfile();
+    void textChanged(QTableWidgetItem *item);
+    void sintaxeMemoryCatch(int i, int sintax);
+
+signals:
+    void sintaxeMemoryThrow(int i, int sintax);
 };
 
 #endif // MAINWINDOW_H
