@@ -5,6 +5,8 @@ Processor::Processor()
     this->controlUnit = new ControlUnit;
     this->dataPath = new DataPath;
     this->mainMemory = new QStringList;
+
+    this->mainMemory->fill("0", 32);
 }
 
 Processor::~Processor()

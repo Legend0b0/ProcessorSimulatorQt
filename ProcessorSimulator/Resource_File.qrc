@@ -8,5 +8,11 @@
         <file>img/ArrowRLeft.png</file>
         <file>img/ArrowRRight.png</file>
         <file>img/ArrowRTop.png</file>
+        <file>img/BallArrowBot.png</file>
+        <file>img/BallArrowLeft.png</file>
+        <file>img/BallArrowRight.png</file>
+        <file>img/BallArrowTop.png</file>
+        <file>img/ArrowBTopLeft.png</file>
+        <file>img/ArrowRTopLeft.png</file>
     </qresource>
 </RCC>

@@ -12,13 +12,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     this->settingLayouts();
 
-    this->iniciateMemory();
-
     this->connects();
 }
 
 MainWindow::~MainWindow()
 {
+    delete this->controlUnit_label;
     delete this->microInstruction_label;
     delete this->PC_label;
     delete this->IR_label;
@@ -28,22 +27,62 @@ MainWindow::~MainWindow()
     delete this->SwitchPos_label;
     delete this->CAddr_label;
     delete this->RWAddr_label;
-
     delete this->arrowIRToPC;
     delete this->arrowIRToMIR;
 
-    delete this->controlUnit_label;
     delete this->dataPath_label;
+    delete this->registerBank_label;
+    delete this->ABusAdr_label;
+    delete this->BBusAdr_label;
+    delete this->CBusAdr_label;
+    delete this->ABus_label;
+    delete this->BBus_label;
+    delete this->CBus_label;
+    delete this->MMBus_label;
+    delete this->R0_label;
+    delete this->R1_label;
+    delete this->R2_label;
+    delete this->R3_label;
+    delete this->ABusALU_label;
+    delete this->BBusALU_label;
+    delete this->CBusALU_label;
+    this->rAAdr->clear();
+    delete this->rAAdr;
+    this->rBAdr->clear();
+    delete this->rBAdr;
+    this->rCAdr->clear();
+    delete this->rCAdr;
+    this->rALU->clear();
+    delete this->rALU;
+    delete this->arrowAAdrToABus;
+    delete this->arrowBAdrToBBus;
+    delete this->arrowABusToALU;
+    delete this->arrowBBusToALU;
+    delete this->arrowALUToCBus;
+    delete this->arrowCBusToMMBus;
+    delete this->arrowMMBusToCBus;
+    delete this->arrowCBusToCAdr;
+    delete this->ballArrowAAdr;
+    delete this->ballArrowBAdr;
+    delete this->ballArrowCAdr;
+    delete this->ballArrowALU;
+
     delete this->memory_label;
 
     delete this->arrowBTop;
     delete this->arrowBBot;
     delete this->arrowBRight;
     delete this->arrowBLeft;
+    delete this->arrowBTopLeft;
     delete this->arrowRTop;
     delete this->arrowRBot;
     delete this->arrowRRight;
     delete this->arrowRLeft;
+    delete this->arrowRTopLeft;
+    delete this->ballArrowTop;
+    delete this->ballArrowBot;
+    delete this->ballArrowRight;
+    delete this->ballArrowLeft;
 
     delete this->PC_lineEdit;
     delete this->IR_lineEdit;
@@ -53,6 +92,18 @@ MainWindow::~MainWindow()
     delete this->SwitchPos_lineEdit;
     delete this->CAddr_lineEdit;
     delete this->RWAddr_lineEdit;
+
+    delete this->R0_lineEdit;
+    delete this->R1_lineEdit;
+    delete this->R2_lineEdit;
+    delete this->R3_lineEdit;
+    delete this->ABus_lineEdit;
+    delete this->BBus_lineEdit;
+    delete this->CBus_lineEdit;
+    delete this->MMBus_lineEdit;
+    delete this->ABusALU_lineEdit;
+    delete this->BBusALU_lineEdit;
+    delete this->CBusALU_lineEdit;
 
     delete this->file_button;
     delete this->PC_button;
@@ -74,6 +125,34 @@ MainWindow::~MainWindow()
     delete this->controlUnitLayoutWindow;
     delete this->controlUnitScroll;
 
+    delete this->aAdrLayout;
+    delete this->aAdrLayoutWindow;
+    delete this->bAdrLayout;
+    delete this->bAdrLayoutWindow;
+    delete this->cAdrLayout;
+    delete this->cAdrLayoutWindow;
+    delete this->aluArrowLayout;
+    delete this->aluArrowLayoutWindow;
+    delete this->aBusLayout;
+    delete this->aBusLayoutWindow;
+    delete this->bBusLayout;
+    delete this->bBusLayoutWindow;
+    delete this->cBusLayout;
+    delete this->cBusLayoutWindow;
+    delete this->mmBusLayout;
+    delete this->mmBusLayoutWindow;
+    delete this->aBusALULayout;
+    delete this->aBusALULayoutWindow;
+    delete this->bBusALULayout;
+    delete this->bBusALULayoutWindow;
+    delete this->cBusALULayout;
+    delete this->cBusALULayoutWindow;
+    delete this->aluLayout;
+    delete this->aluLayoutWindow;
+    delete this->registersLayout;
+    delete this->registersLayoutWindow;
+    delete this->registerBankLayout;
+    delete this->registerBankLayoutWindow;
     delete this->dataPathLayout;
     delete this->dataPathLayoutWindow;
     delete this->dataPathScroll;
@@ -102,6 +181,32 @@ void MainWindow::configureWindow()
 
 void MainWindow::createWidgets()
 {
+    this->createControlUnitWidgets();
+    this->createDataPathWidgets();
+    this->createMainMemoryWidgets();
+
+    this->arrowBTop = new QPixmap(":/img/ArrowBTop.png");
+    this->arrowBBot = new QPixmap(":/img/ArrowBBot.png");
+    this->arrowBRight = new QPixmap(":/img/ArrowBRight.png");
+    this->arrowBLeft = new QPixmap(":/img/ArrowBLeft.png");
+    this->arrowBTopLeft = new QPixmap(":/img/ArrowBTopLeft.png");
+    this->arrowRTop = new QPixmap(":/img/ArrowRTop.png");
+    this->arrowRBot = new QPixmap(":/img/ArrowRBot.png");
+    this->arrowRRight = new QPixmap(":/img/ArrowRRight.png");
+    this->arrowRLeft = new QPixmap(":/img/ArrowRLeft.png");
+    this->arrowRTopLeft = new QPixmap(":/img/ArrowRTopLeft.png");
+    this->ballArrowTop = new QPixmap(":/img/BallArrowTop.png");
+    this->ballArrowBot = new QPixmap(":/img/BallArrowBot.png");
+    this->ballArrowRight = new QPixmap(":/img/BallArrowRight.png");
+    this->ballArrowLeft = new QPixmap(":/img/BallArrowLeft.png");
+
+    this->processor = new Processor;
+}
+
+void MainWindow::createControlUnitWidgets()
+{
+    this->controlUnit_label = new QLabel("Control Unit");
+
     this->microInstruction_label = new QLabel("Micro Instruction Register");
     this->PC_label = new QLabel("PC:");
     this->IR_label = new QLabel("IR:");
@@ -111,22 +216,8 @@ void MainWindow::createWidgets()
     this->SwitchPos_label = new QLabel("Switch Pos:");
     this->CAddr_label = new QLabel("C Addr:");
     this->RWAddr_label = new QLabel("RW Addr:");
-
     this->arrowIRToPC = new QLabel;
     this->arrowIRToMIR = new QLabel;
-
-    this->controlUnit_label = new QLabel("Control Unit");
-    this->dataPath_label = new QLabel("Data Path");
-    this->memory_label = new QLabel("Main Memory");
-
-    this->arrowBTop = new QPixmap(":/img/ArrowBTop.png");
-    this->arrowBBot = new QPixmap(":/img/ArrowBBot.png");
-    this->arrowBRight = new QPixmap(":/img/ArrowBRight.png");
-    this->arrowBLeft = new QPixmap(":/img/ArrowBLeft.png");
-    this->arrowRTop = new QPixmap(":/img/ArrowRTop.png");
-    this->arrowRBot = new QPixmap(":/img/ArrowRBot.png");
-    this->arrowRRight = new QPixmap(":/img/ArrowRRight.png");
-    this->arrowRLeft = new QPixmap(":/img/ArrowRLeft.png");
 
     this->PC_lineEdit = new QLineEdit("0");
     this->IR_lineEdit = new QLineEdit("");
@@ -137,25 +228,86 @@ void MainWindow::createWidgets()
     this->CAddr_lineEdit = new QLineEdit("00");
     this->RWAddr_lineEdit = new QLineEdit("00000");
 
-    this->file_button = new QPushButton("Input File");
     this->PC_button = new QPushButton("Reset");
+
+    this->controlUnitScroll = new QScrollArea;
+}
+
+void MainWindow::createDataPathWidgets()
+{
+    this->dataPath_label = new QLabel("Data Path");
+    this->registerBank_label = new QLabel("Register Bank");
+    this->ABusAdr_label = new QLabel("A Bus\nAddress");
+    this->BBusAdr_label = new QLabel("B Bus\nAddress");
+    this->CBusAdr_label = new QLabel("C Bus\nAddress");
+    this->ABus_label = new QLabel("A Bus");
+    this->BBus_label = new QLabel("B Bus");
+    this->CBus_label = new QLabel("C Bus");
+    this->MMBus_label = new QLabel("Main Memory Bus");
+    this->R0_label = new QLabel("R0:");
+    this->R1_label = new QLabel("R1:");
+    this->R2_label = new QLabel("R2:");
+    this->R3_label = new QLabel("R3:");
+    this->ABusALU_label = new QLabel("A:");
+    this->BBusALU_label = new QLabel("B:");
+    this->CBusALU_label = new QLabel("C:");
+    this->arrowAAdrToABus = new QLabel;
+    this->arrowBAdrToBBus = new QLabel;
+    this->arrowABusToALU = new QLabel;
+    this->arrowBBusToALU = new QLabel;
+    this->arrowALUToCBus = new QLabel;
+    this->arrowCBusToMMBus = new QLabel;
+    this->arrowMMBusToCBus = new QLabel;
+    this->arrowCBusToCAdr = new QLabel;
+    this->ballArrowAAdr = new QLabel;
+    this->ballArrowBAdr = new QLabel;
+    this->ballArrowCAdr = new QLabel;
+    this->ballArrowALU = new QLabel;
+
+    this->rAAdr = new QVector<QLabel*>;
+    this->rBAdr = new QVector<QLabel*>;
+    this->rCAdr = new QVector<QLabel*>;
+    this->rALU = new QVector<QLabel*>;
+
+    this->R0_lineEdit = new QLineEdit("0");
+    this->R1_lineEdit = new QLineEdit("0");
+    this->R2_lineEdit = new QLineEdit("0");
+    this->R3_lineEdit = new QLineEdit("0");
+    this->ABus_lineEdit = new QLineEdit("0");
+    this->BBus_lineEdit = new QLineEdit("0");
+    this->CBus_lineEdit = new QLineEdit("0");
+    this->MMBus_lineEdit = new QLineEdit("0");
+    this->ABusALU_lineEdit = new QLineEdit("0");;
+    this->BBusALU_lineEdit = new QLineEdit("0");;
+    this->CBusALU_lineEdit = new QLineEdit("0");;
+
+    this->dataPathScroll = new QScrollArea;
+}
+
+void MainWindow::createMainMemoryWidgets()
+{
+    this->memory_label = new QLabel("Main Memory");
+
+    this->file_button = new QPushButton("Input File");
 
     this->file = new QFile;
     this->file_RamMemory = new QFile;
 
     this->createTableMemory();
-
-    this->processor = new Processor;
-
-    this->controlUnitScroll = new QScrollArea;
-    this->dataPathScroll = new QScrollArea;
-
-    this->split = new QSplitter(Qt::Vertical);
 }
 
 void MainWindow::configureWidgets()
 {
+    this->configureControlUnitWidgets();
+    this->configureDataPathWidgets();
+    this->configureMainMemoryWidgets();
+
     QDir::setCurrent("../..");
+}
+
+void MainWindow::configureControlUnitWidgets()
+{
+    this->controlUnit_label->setAlignment(Qt::AlignCenter);
 
     this->microInstruction_label->setAlignment(Qt::AlignCenter);
     this->PC_label->setAlignment(Qt::AlignCenter);
@@ -166,14 +318,10 @@ void MainWindow::configureWidgets()
     this->SwitchPos_label->setAlignment(Qt::AlignCenter);
     this->CAddr_label->setAlignment(Qt::AlignCenter);
     this->RWAddr_label->setAlignment(Qt::AlignCenter);
+    this->arrowIRToMIR->setAlignment(Qt::AlignBottom|Qt::AlignRight);
 
     this->arrowIRToPC->setPixmap(arrowBLeft->scaled(30, 30, Qt::KeepAspectRatio));
     this->arrowIRToMIR->setPixmap(arrowBTop->scaled(30, 30, Qt::KeepAspectRatio));
-    this->arrowIRToMIR->setAlignment(Qt::AlignRight);
-
-    this->controlUnit_label->setAlignment(Qt::AlignCenter);
-    this->dataPath_label->setAlignment(Qt::AlignCenter);
-    this->memory_label->setAlignment(Qt::AlignCenter);
 
     this->PC_lineEdit->setAlignment(Qt::AlignCenter);
     this->IR_lineEdit->setAlignment(Qt::AlignCenter);
@@ -194,6 +342,75 @@ void MainWindow::configureWidgets()
     this->RWAddr_lineEdit->setFixedWidth(80);
 
     this->PC_button->setFixedWidth(60);
+}
+
+void MainWindow::configureDataPathWidgets()
+{
+    this->dataPath_label->setAlignment(Qt::AlignCenter);
+    this->registerBank_label->setAlignment(Qt::AlignCenter);
+
+    this->ABusAdr_label->setAlignment(Qt::AlignCenter);
+    this->BBusAdr_label->setAlignment(Qt::AlignCenter);
+    this->CBusAdr_label->setAlignment(Qt::AlignCenter);
+    this->ABus_label->setAlignment(Qt::AlignCenter);
+    this->BBus_label->setAlignment(Qt::AlignCenter);
+    this->CBus_label->setAlignment(Qt::AlignCenter);
+    this->MMBus_label->setAlignment(Qt::AlignCenter);
+
+    this->arrowAAdrToABus->setPixmap(arrowBBot->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowBAdrToBBus->setPixmap(arrowBBot->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowABusToALU->setPixmap(arrowBBot->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowBBusToALU->setPixmap(arrowBBot->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowALUToCBus->setPixmap(arrowBTopLeft->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowCBusToMMBus->setPixmap(arrowBBot->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowMMBusToCBus->setPixmap(arrowBTop->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowCBusToCAdr->setPixmap(arrowBTop->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowAAdr->setPixmap(ballArrowTop->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowBAdr->setPixmap(ballArrowTop->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowCAdr->setPixmap(ballArrowTop->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowALU->setPixmap(ballArrowTop->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowAAdrToABus->setAlignment(Qt::AlignCenter);
+    this->arrowBAdrToBBus->setAlignment(Qt::AlignCenter);
+    this->arrowABusToALU->setAlignment(Qt::AlignCenter);
+    this->arrowBBusToALU->setAlignment(Qt::AlignCenter);
+    this->arrowALUToCBus->setAlignment(Qt::AlignCenter);
+    this->arrowCBusToMMBus->setAlignment(Qt::AlignLeft);
+    this->arrowMMBusToCBus->setAlignment(Qt::AlignRight);
+    this->arrowCBusToCAdr->setAlignment(Qt::AlignCenter);
+    this->ballArrowAAdr->setAlignment(Qt::AlignCenter);
+    this->ballArrowBAdr->setAlignment(Qt::AlignCenter);
+    this->ballArrowCAdr->setAlignment(Qt::AlignCenter);
+    this->ballArrowALU->setAlignment(Qt::AlignCenter);
+
+    this->rAAdr->append(new QLabel("R0"));
+    this->rBAdr->append(new QLabel("R0"));
+    this->rCAdr->append(new QLabel("R0"));
+    this->rALU->append(new QLabel("A+B"));
+    this->rAAdr->append(new QLabel("R1"));
+    this->rBAdr->append(new QLabel("R1"));
+    this->rCAdr->append(new QLabel("R1"));
+    this->rALU->append(new QLabel("A-B"));
+    this->rAAdr->append(new QLabel("R2"));
+    this->rBAdr->append(new QLabel("R2"));
+    this->rCAdr->append(new QLabel("R2"));
+    this->rALU->append(new QLabel("A|B"));
+    this->rAAdr->append(new QLabel("R3"));
+    this->rBAdr->append(new QLabel("R3"));
+    this->rCAdr->append(new QLabel("R3"));
+    this->rALU->append(new QLabel("A&B"));
+
+    for(int i = 0; i < 4; i++)
+    {
+        this->rAAdr->at(i)->setAlignment(Qt::AlignCenter);
+        this->rBAdr->at(i)->setAlignment(Qt::AlignCenter);
+        this->rCAdr->at(i)->setAlignment(Qt::AlignCenter);
+        this->rALU->at(i)->setAlignment(Qt::AlignCenter);
+    }
+}
+
+void MainWindow::configureMainMemoryWidgets()
+{
+    this->memory_label->setAlignment(Qt::AlignCenter);
 }
 
 void MainWindow::createTableMemory()
@@ -230,34 +447,91 @@ void MainWindow::createTableMemory()
 
 void MainWindow::createLayouts()
 {
-    // Layouts Widgets
+    this->createControlUnitLayouts();
+    this->createDataPathLayouts();
+    this->createMainMemoryLayouts();
+
+    this->split = new QSplitter(Qt::Vertical);
+
+    this->mainLayoutWindow = new QWidget;
+
+    this->mainLayout = new QHBoxLayout(this->mainLayoutWindow);
+}
+
+void MainWindow::createControlUnitLayouts()
+{
     this->microInstructionLayoutWindow = new QWidget;
     this->pcirLayoutWindow = new QWidget;
     this->pcLayoutWindow = new QWidget;
     this->irLayoutWindow = new QWidget;
     this->controlUnitLayoutWindow = new QWidget;
 
-    this->dataPathLayoutWindow = new QWidget;
-
-    this->mainMemoryLayoutWindow = new QWidget;
-
-    this->mainLayoutWindow = new QWidget;
-
-    // Layouts
     this->microInstructionLayout = new QGridLayout(this->microInstructionLayoutWindow);
     this->pcirLayout = new QHBoxLayout(this->pcirLayoutWindow);
     this->pcLayout = new QHBoxLayout(this->pcLayoutWindow);
     this->irLayout = new QHBoxLayout(this->irLayoutWindow);
     this->controlUnitLayout = new QVBoxLayout(this->controlUnitLayoutWindow);
+}
 
+void MainWindow::createDataPathLayouts()
+{
+    this->aAdrLayoutWindow = new QWidget;
+    this->bAdrLayoutWindow = new QWidget;
+    this->cAdrLayoutWindow = new QWidget;
+    this->aluArrowLayoutWindow = new QWidget;
+    this->aBusLayoutWindow = new QWidget;
+    this->bBusLayoutWindow = new QWidget;
+    this->cBusLayoutWindow = new QWidget;
+    this->mmBusLayoutWindow = new QWidget;
+    this->aBusALULayoutWindow = new QWidget;
+    this->bBusALULayoutWindow = new QWidget;
+    this->cBusALULayoutWindow = new QWidget;
+    this->aluLayoutWindow = new QWidget;
+    this->registersLayoutWindow = new QWidget;
+    this->registerBankLayoutWindow = new QWidget;
+    this->dataPathLayoutWindow = new QWidget;
+
+    this->aAdrLayout = new QGridLayout(this->aAdrLayoutWindow);
+    this->bAdrLayout = new QGridLayout(this->bAdrLayoutWindow);
+    this->cAdrLayout = new QGridLayout(this->cAdrLayoutWindow);
+    this->aluArrowLayout = new QGridLayout(this->aluArrowLayoutWindow);
+    this->aBusLayout = new QVBoxLayout(this->aBusLayoutWindow);
+    this->bBusLayout = new QVBoxLayout(this->bBusLayoutWindow);
+    this->cBusLayout = new QVBoxLayout(this->cBusLayoutWindow);
+    this->mmBusLayout = new QVBoxLayout(this->mmBusLayoutWindow);
+    this->aBusALULayout = new QHBoxLayout(this->aBusALULayoutWindow);
+    this->bBusALULayout = new QHBoxLayout(this->bBusALULayoutWindow);
+    this->cBusALULayout = new QHBoxLayout(this->cBusALULayoutWindow);
+    this->aluLayout = new QGridLayout(this->aluLayoutWindow);
+    this->registersLayout = new QFormLayout(this->registersLayoutWindow);
+    this->registerBankLayout = new QGridLayout(this->registerBankLayoutWindow);
     this->dataPathLayout = new QVBoxLayout(this->dataPathLayoutWindow);
+}
+
+void MainWindow::createMainMemoryLayouts()
+{
+    this->mainMemoryLayoutWindow = new QWidget;
 
     this->mainMemoryLayout = new QVBoxLayout(this->mainMemoryLayoutWindow);
-
-    this->mainLayout = new QHBoxLayout(this->mainLayoutWindow);
 }
 
 void MainWindow::settingLayouts()
+{
+    this->settingControlUnitLayouts();
+    this->settingDataPathLayouts();
+    this->settingMainMemoryLayouts();
+
+    this->split->setChildrenCollapsible(false);
+    this->split->addWidget(this->dataPathScroll);
+    this->split->addWidget(this->controlUnitScroll);
+
+    this->mainLayout->addWidget(this->mainMemoryLayoutWindow);
+    this->mainLayout->addWidget(this->split);
+
+    this->setCentralWidget(this->mainLayoutWindow);
+}
+
+void MainWindow::settingControlUnitLayouts()
 {
     this->pcLayout->addWidget(this->PC_label);
     this->pcLayout->addWidget(this->PC_lineEdit);
@@ -285,42 +559,116 @@ void MainWindow::settingLayouts()
     this->microInstructionLayout->addWidget(this->SwitchPos_lineEdit, 1, 3);
     this->microInstructionLayout->addWidget(this->CAddr_lineEdit, 1, 4);
     this->microInstructionLayout->addWidget(this->RWAddr_lineEdit, 1, 5);
+    this->microInstructionLayout->addWidget(this->arrowIRToMIR, 2, 4);
+    this->microInstructionLayout->setRowMinimumHeight(2, 50);
     this->microInstructionLayout->setAlignment(Qt::AlignCenter);
 
     this->controlUnitLayout->addWidget(this->controlUnit_label);
     this->controlUnitLayout->addSpacing(50);
     this->controlUnitLayout->addWidget(this->microInstruction_label);
     this->controlUnitLayout->addWidget(this->microInstructionLayoutWindow);
-    this->controlUnitLayout->addWidget(this->arrowIRToMIR);
     this->controlUnitLayout->addWidget(this->pcirLayoutWindow);
     this->controlUnitLayout->setAlignment(Qt::AlignCenter);
 
-    this->dataPathLayout->addWidget(this->dataPath_label);
-    this->dataPathLayout->setAlignment(Qt::AlignCenter);
-
     this->controlUnitScroll->setWidget(this->controlUnitLayoutWindow);
     this->controlUnitScroll->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::settingDataPathLayouts()
+{
+    this->aAdrLayout->addWidget(this->ABusAdr_label, 0, 1);
+    this->aAdrLayout->addWidget(this->rAAdr->at(0), 1, 1);
+    this->aAdrLayout->addWidget(this->rAAdr->at(1), 2, 2);
+    this->aAdrLayout->addWidget(this->rAAdr->at(2), 3, 1);
+    this->aAdrLayout->addWidget(this->rAAdr->at(3), 2, 0);
+    this->aAdrLayout->addWidget(this->ballArrowAAdr, 2, 1);
+
+    this->bAdrLayout->addWidget(this->BBusAdr_label, 0, 1);
+    this->bAdrLayout->addWidget(this->rBAdr->at(0), 1, 1);
+    this->bAdrLayout->addWidget(this->rBAdr->at(1), 2, 2);
+    this->bAdrLayout->addWidget(this->rBAdr->at(2), 3, 1);
+    this->bAdrLayout->addWidget(this->rBAdr->at(3), 2, 0);
+    this->bAdrLayout->addWidget(this->ballArrowBAdr, 2, 1);
+
+    this->cAdrLayout->addWidget(this->CBusAdr_label, 0, 1);
+    this->cAdrLayout->addWidget(this->rCAdr->at(0), 1, 1);
+    this->cAdrLayout->addWidget(this->rCAdr->at(1), 2, 2);
+    this->cAdrLayout->addWidget(this->rCAdr->at(2), 3, 1);
+    this->cAdrLayout->addWidget(this->rCAdr->at(3), 2, 0);
+    this->cAdrLayout->addWidget(this->ballArrowCAdr, 2, 1);
+
+    this->aluArrowLayout->addWidget(this->rALU->at(0), 1, 1);
+    this->aluArrowLayout->addWidget(this->rALU->at(1), 2, 2);
+    this->aluArrowLayout->addWidget(this->rALU->at(2), 3, 1);
+    this->aluArrowLayout->addWidget(this->rALU->at(3), 2, 0);
+    this->aluArrowLayout->addWidget(this->ballArrowALU, 2, 1);
+
+    this->aBusLayout->addWidget(this->ABus_label);
+    this->aBusLayout->addWidget(this->ABus_lineEdit);
+
+    this->bBusLayout->addWidget(this->BBus_label);
+    this->bBusLayout->addWidget(this->BBus_lineEdit);
+
+    this->cBusLayout->addWidget(this->CBus_label);
+    this->cBusLayout->addWidget(this->CBus_lineEdit);
+
+    this->mmBusLayout->addWidget(this->MMBus_label);
+    this->mmBusLayout->addWidget(this->MMBus_lineEdit);
+
+    this->registersLayout->addRow(this->R0_label, this->R0_lineEdit);
+    this->registersLayout->addRow(this->R1_label, this->R1_lineEdit);
+    this->registersLayout->addRow(this->R2_label, this->R2_lineEdit);
+    this->registersLayout->addRow(this->R3_label, this->R3_lineEdit);
+
+    this->aBusALULayout->addWidget(this->ABusALU_label);
+    this->aBusALULayout->addWidget(this->ABusALU_lineEdit);
+
+    this->bBusALULayout->addWidget(this->BBusALU_label);
+    this->bBusALULayout->addWidget(this->BBusALU_lineEdit);
+
+    this->cBusALULayout->addWidget(this->CBusALU_label);
+    this->cBusALULayout->addWidget(this->CBusALU_lineEdit);
+
+    this->aluLayout->addWidget(new QLabel("Arietmetric Logic Unit"), 0, 0);
+    this->aluLayout->addWidget(aBusALULayoutWindow, 1, 0);
+    this->aluLayout->addWidget(bBusALULayoutWindow, 1, 1);
+    this->aluLayout->addWidget(cBusALULayoutWindow, 2, 0);
+    this->aluLayout->addWidget(aluArrowLayoutWindow, 2, 1);
+
+    this->registerBankLayout->addWidget(this->cAdrLayoutWindow, 0, 0);
+    this->registerBankLayout->addWidget(this->registersLayoutWindow, 0, 1);
+    this->registerBankLayout->addWidget(this->aAdrLayoutWindow, 0, 2);
+    this->registerBankLayout->addWidget(this->bAdrLayoutWindow, 0, 3);
+    this->registerBankLayout->addWidget(this->arrowCBusToCAdr, 1, 0);
+    this->registerBankLayout->addWidget(this->arrowAAdrToABus, 1, 2);
+    this->registerBankLayout->addWidget(this->arrowBAdrToBBus, 1, 3);
+    this->registerBankLayout->addWidget(this->cBusLayoutWindow, 2, 0);
+    this->registerBankLayout->addWidget(this->aBusLayoutWindow, 2, 2);
+    this->registerBankLayout->addWidget(this->bBusLayoutWindow, 2, 3);
+    this->registerBankLayout->addWidget(this->arrowCBusToMMBus, 3, 0);
+    this->registerBankLayout->addWidget(this->arrowMMBusToCBus, 3, 0);
+    this->registerBankLayout->addWidget(this->arrowALUToCBus, 3, 1);
+    this->registerBankLayout->addWidget(this->arrowABusToALU, 3, 2);
+    this->registerBankLayout->addWidget(this->arrowBBusToALU, 3, 3);
+    this->registerBankLayout->addWidget(this->mmBusLayoutWindow, 4, 0);
+    this->registerBankLayout->addWidget(this->aluLayoutWindow, 4, 2, 4, 3);
+
+    this->dataPathLayout->addWidget(this->dataPath_label);
+    this->dataPathLayout->addSpacing(50);
+    this->dataPathLayout->addWidget(this->registerBank_label);
+    this->dataPathLayout->addWidget(this->registerBankLayoutWindow);
+    this->dataPathLayout->setAlignment(Qt::AlignCenter);
+
     this->dataPathScroll->setWidget(this->dataPathLayoutWindow);
     this->dataPathScroll->setAlignment(Qt::AlignCenter);
+}
 
+void MainWindow::settingMainMemoryLayouts()
+{
     this->mainMemoryLayout->addWidget(this->memory_label);
     this->mainMemoryLayout->addWidget(this->file_button);
     this->mainMemoryLayout->addWidget(this->tableMemory);
     this->mainMemoryLayoutWindow->setFixedWidth(270);
-
-    this->split->setChildrenCollapsible(false);
-    this->split->addWidget(this->dataPathScroll);
-    this->split->addWidget(this->controlUnitScroll);
-
-    this->mainLayout->addWidget(this->mainMemoryLayoutWindow);
-    this->mainLayout->addWidget(this->split);
-
-    this->setCentralWidget(this->mainLayoutWindow);
-}
-
-void MainWindow::iniciateMemory()
-{
-    this->processor->mainMemory->fill("0", 32);
 }
 
 void MainWindow::connects()
