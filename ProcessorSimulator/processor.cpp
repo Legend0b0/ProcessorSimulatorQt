@@ -1,6 +1,6 @@
 #include "processor.h"
 
-Processor::Processor()
+Processor::Processor(QObject*)
 {
     this->controlUnit = new ControlUnit;
     this->dataPath = new DataPath;
@@ -25,101 +25,96 @@ int Processor::binToDec(QString bin)
 
 QString Processor::decToBin(int dec)
 {
-    QString bin = bin.setNum(dec, 2);
+    QString bin;
+
+    bin.setNum(dec, 2);
 
     return(bin);
 }
 
 void Processor::instructionInterpretation()
 {
-    if(this->controlUnit->IR->startsWith("LOAD"))
+    if(this->controlUnit->IR.startsWith("LOAD"))
     {
         this->LOAD();
         return;
     }
-    /*if(this->controlUnit->IR->startsWith("STORE"))
+    if(this->controlUnit->IR.startsWith("STORE"))
     {
         this->STORE();
         return;
     }
-    if(this->controlUnit->IR->startsWith("MOVE"))
+    if(this->controlUnit->IR.startsWith("MOVE"))
     {
         this->MOVE();
         return;
     }
-    if(this->controlUnit->IR->startsWith("ADD"))
+    if(this->controlUnit->IR.startsWith("ADD"))
     {
         this->ADD();
         return;
     }
-    if(this->controlUnit->IR->startsWith("SUB"))
+    if(this->controlUnit->IR.startsWith("SUB"))
     {
         this->SUB();
         return;
     }
-    if(this->controlUnit->IR->startsWith("AND"))
+    if(this->controlUnit->IR.startsWith("AND"))
     {
         this->AND();
         return;
     }
-    if(this->controlUnit->IR->startsWith("OR"))
+    if(this->controlUnit->IR.startsWith("OR"))
     {
         this->OR();
         return;
     }
-    if(this->controlUnit->IR->startsWith("BRANCH"))
+    if(this->controlUnit->IR.startsWith("BRANCH"))
     {
         this->BRANCH();
         return;
     }
-    if(this->controlUnit->IR->startsWith("BZERO"))
+    if(this->controlUnit->IR.startsWith("BZERO"))
     {
         this->BZERO();
         return;
     }
-    if(this->controlUnit->IR->startsWith("BNEG"))
+    if(this->controlUnit->IR.startsWith("BNEG"))
     {
         this->BNEG();
         return;
     }
-    if(this->controlUnit->IR->startsWith("NOP"))
+    if(this->controlUnit->IR.startsWith("HALT"))
+    {
+        this->HALT();
+        return;
+    }
+    if(this->controlUnit->IR.startsWith("NOP"))
     {
         this->NOP();
         return;
     }
-    if(this->controlUnit->IR->startsWith("HALT"))
-    {
-        this->HALT();
-        return;
-    }*/
+    this->NOP();
+    return;
 }
 
 void Processor::clock()
 {
     while(1)
     {
-        this->controlUnit->IR->clear();
-        this->controlUnit->IR->append(this->mainMemory->at(this->controlUnit->PC));
+        this->controlUnit->IR.clear();
+        this->controlUnit->IR.append(this->mainMemory->at(this->controlUnit->PC));
 
         if(++this->controlUnit->PC == 32)
         {
             this->controlUnit->PC = 0;
         }
 
-        //emit this->controlUnit->PCThrow();
-        qDebug() << this->controlUnit->PC;
+        emit this->throwPC();
 
         this->instructionInterpretation();
 
-        //emit this->controlUnit->controlUnitThrow();
-
-        qDebug() << this->controlUnit->IR <<
-        this->controlUnit->AAddr <<
-        this->controlUnit->BAddr <<
-        this->controlUnit->UlaOp <<
-        this->controlUnit->SwitchPos <<
-        this->controlUnit->CAddr <<
-        this->controlUnit->RWAddr;
+        emit this->throwControlUnit();
 
         break;
     }
@@ -127,7 +122,7 @@ void Processor::clock()
 
 void Processor::LOAD()
 {
-    QStringList inst = this->controlUnit->IR->split(' ');
+    QStringList inst = this->controlUnit->IR.split(' ');
 
     this->controlUnit->AAddr = "00";
     this->controlUnit->BAddr = "00";
@@ -135,24 +130,27 @@ void Processor::LOAD()
     this->controlUnit->SwitchPos = "1010";
 
     inst[1].removeFirst();
-    this->controlUnit->CAddr = this->decToBin(inst[1].toInt());
 
-    this->controlUnit->RWAddr = this->decToBin(inst[2].toInt());
+    this->controlUnit->CAddr.clear();
+    this->controlUnit->CAddr.append(this->decToBin(inst[1].toInt()));
+
+    this->controlUnit->RWAddr.clear();
+    this->controlUnit->RWAddr.append(this->decToBin(inst[2].toInt()));
 }
 
 void Processor::STORE()
 {
-    QStringList inst = this->controlUnit->IR->split(' ');
+    // QStringList inst = this->controlUnit->IR->split(" ");
 
-    this->controlUnit->AAddr = "00";
-    this->controlUnit->BAddr = "00";
-    this->controlUnit->UlaOp = "00";
-    this->controlUnit->SwitchPos = "0101";
+    // this->controlUnit->AAddr = "00";
+    // this->controlUnit->BAddr = "00";
+    // this->controlUnit->UlaOp = "00";
+    // this->controlUnit->SwitchPos = "0101";
 
-    this->controlUnit->CAddr = this->decToBin(inst[1].toInt());
+    // this->controlUnit->CAddr = this->decToBin(inst[1].toInt());
 
-    inst[2].removeFirst();
-    this->controlUnit->RWAddr = this->decToBin(inst[2].toInt());
+    // inst[2].removeFirst();
+    // this->controlUnit->RWAddr = this->decToBin(inst[2].toInt());
 }
 
 void Processor::MOVE()

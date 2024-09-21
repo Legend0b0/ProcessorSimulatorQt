@@ -1,13 +1,16 @@
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
 
+#include <QObject>
 #include "controlunit.h"
 #include "datapath.h"
 
-class Processor
+class Processor : public QObject
 {
+    Q_OBJECT
+
 public:
-    Processor();
+    Processor(QObject* parent = nullptr);
     ~Processor();
 
     ControlUnit *controlUnit = nullptr;

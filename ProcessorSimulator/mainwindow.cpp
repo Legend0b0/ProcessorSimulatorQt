@@ -201,7 +201,7 @@ void MainWindow::createWidgets()
     this->ballArrowRight = new QPixmap(":/img/BallArrowRight.png");
     this->ballArrowLeft = new QPixmap(":/img/BallArrowLeft.png");
 
-    this->processor = new Processor;
+    this->processor = new Processor(this);
 }
 
 void MainWindow::createControlUnitWidgets()
@@ -681,8 +681,8 @@ void MainWindow::connects()
     QObject::connect(this->execute_button, &QPushButton::clicked, this, &MainWindow::execute);
     QObject::connect(this->file_button, &QPushButton::clicked, this, &MainWindow::readFile);
     QObject::connect(this->tableMemory, &QTableWidget::itemChanged, this, &MainWindow::textChanged);
-    //QObject::connect(this->processor, &Processor::throwControlUnit, this, &MainWindow::catchControlUnit);
-    //QObject::connect(this->processor, &Processor::throwPC, this, &MainWindow::catchPC);
+    QObject::connect(this->processor, &Processor::throwControlUnit, this, &MainWindow::catchControlUnit);
+    QObject::connect(this->processor, &Processor::throwPC, this, &MainWindow::catchPC);
 }
 
 void MainWindow::verifyInstruction(QTableWidgetItem *item)
@@ -859,7 +859,7 @@ void MainWindow::sintaxeMemoryCatch(int i, int signal)
 
 void MainWindow::catchControlUnit()
 {
-    this->IR_lineEdit->setText(*this->processor->controlUnit->IR);
+    this->IR_lineEdit->setText(this->processor->controlUnit->IR);
     this->AAddr_lineEdit->setText(this->processor->controlUnit->AAddr);
     this->BAddr_lineEdit->setText(this->processor->controlUnit->BAddr);
     this->AluOp_lineEdit->setText(this->processor->controlUnit->UlaOp);

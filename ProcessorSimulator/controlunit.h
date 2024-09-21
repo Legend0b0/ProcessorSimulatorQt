@@ -10,15 +10,15 @@ public:
     ControlUnit();
     ~ControlUnit();
 
-    int PC = 0;
-    QString *IR = nullptr;
+    int PC;
+    QString IR;
 
-    QString AAddr = "00";
-    QString BAddr = "00";
-    QString UlaOp = "00";
-    QString SwitchPos = "0000";
-    QString CAddr = "00";
-    QString RWAddr = "00000";
+    QString AAddr;
+    QString BAddr;
+    QString UlaOp;
+    QString SwitchPos;
+    QString CAddr;
+    QString RWAddr;
 };
 
 #endif // CONTROLUNIT_H
