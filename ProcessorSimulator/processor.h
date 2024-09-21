@@ -14,6 +14,11 @@ public:
     DataPath *dataPath = nullptr;
     QStringList *mainMemory = nullptr;
 
+    int binToDec(QString bin);
+    QString decToBin(int dec);
+    void instructionInterpretation();
+    void clock();
+
     void LOAD();
     void STORE();
     void MOVE();
@@ -26,6 +31,10 @@ public:
     void BNEG();
     void NOP();
     void HALT();
+
+signals:
+    void throwControlUnit();
+    void throwPC();
 };
 
 #endif // PROCESSOR_H

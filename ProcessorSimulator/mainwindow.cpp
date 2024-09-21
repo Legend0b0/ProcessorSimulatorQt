@@ -107,6 +107,7 @@ MainWindow::~MainWindow()
 
     delete this->file_button;
     delete this->PC_button;
+    delete this->execute_button;
 
     delete this->file;
     delete this->file_RamMemory;
@@ -277,9 +278,11 @@ void MainWindow::createDataPathWidgets()
     this->BBus_lineEdit = new QLineEdit("0");
     this->CBus_lineEdit = new QLineEdit("0");
     this->MMBus_lineEdit = new QLineEdit("0");
-    this->ABusALU_lineEdit = new QLineEdit("0");;
-    this->BBusALU_lineEdit = new QLineEdit("0");;
-    this->CBusALU_lineEdit = new QLineEdit("0");;
+    this->ABusALU_lineEdit = new QLineEdit("0");
+    this->BBusALU_lineEdit = new QLineEdit("0");
+    this->CBusALU_lineEdit = new QLineEdit("0");
+
+    this->execute_button = new QPushButton("Execute");
 
     this->dataPathScroll = new QScrollArea;
 }
@@ -643,6 +646,7 @@ void MainWindow::settingDataPathLayouts()
     this->registerBankLayout->addWidget(this->arrowAAdrToABus, 1, 2);
     this->registerBankLayout->addWidget(this->arrowBAdrToBBus, 1, 3);
     this->registerBankLayout->addWidget(this->cBusLayoutWindow, 2, 0);
+    this->registerBankLayout->addWidget(this->execute_button, 2, 1);
     this->registerBankLayout->addWidget(this->aBusLayoutWindow, 2, 2);
     this->registerBankLayout->addWidget(this->bBusLayoutWindow, 2, 3);
     this->registerBankLayout->addWidget(this->arrowCBusToMMBus, 3, 0);
@@ -674,8 +678,11 @@ void MainWindow::settingMainMemoryLayouts()
 void MainWindow::connects()
 {
     QObject::connect(this, &MainWindow::sintaxeMemoryThrow, this, &MainWindow::sintaxeMemoryCatch);
+    QObject::connect(this->execute_button, &QPushButton::clicked, this, &MainWindow::execute);
     QObject::connect(this->file_button, &QPushButton::clicked, this, &MainWindow::readFile);
     QObject::connect(this->tableMemory, &QTableWidget::itemChanged, this, &MainWindow::textChanged);
+    //QObject::connect(this->processor, &Processor::throwControlUnit, this, &MainWindow::catchControlUnit);
+    //QObject::connect(this->processor, &Processor::throwPC, this, &MainWindow::catchPC);
 }
 
 void MainWindow::verifyInstruction(QTableWidgetItem *item)
@@ -691,6 +698,26 @@ void MainWindow::verifyInstruction(QTableWidgetItem *item)
     }
 
     emit sintaxeMemoryThrow(item->row(), 2);
+    return;
+}
+
+void MainWindow::execute()
+{
+    for(int i = 0; i < 32; i++)
+    {
+        if(this->tableMemory->item(i,2)->text() == "Syntax Error")
+        {
+            QMessageBox::information(this,"Error","Syntax Error at Main Memory");
+            return;
+        }
+    }
+
+    for(int i = 0; i < 32; i++)
+    {
+        this->processor->mainMemory->replace(i, this->tableMemory->item(i, 1)->text());
+    }
+
+    this->processor->clock();
     return;
 }
 
@@ -823,13 +850,25 @@ void MainWindow::sintaxeMemoryCatch(int i, int signal)
         }
         case 2:
         {
-            this->tableMemory->item(i, 2)->setText("Sintaxe Error");
+            this->tableMemory->item(i, 2)->setText("Syntax Error");
             this->tableMemory->item(i, 2)->setForeground(QBrush(QColor(255, 0, 0)));
             break;
         }
-        default:
-        {
-            break;
-        }
     }
+}
+
+void MainWindow::catchControlUnit()
+{
+    this->IR_lineEdit->setText(*this->processor->controlUnit->IR);
+    this->AAddr_lineEdit->setText(this->processor->controlUnit->AAddr);
+    this->BAddr_lineEdit->setText(this->processor->controlUnit->BAddr);
+    this->AluOp_lineEdit->setText(this->processor->controlUnit->UlaOp);
+    this->SwitchPos_lineEdit->setText(this->processor->controlUnit->SwitchPos);
+    this->CAddr_lineEdit->setText(this->processor->controlUnit->CAddr);
+    this->RWAddr_lineEdit->setText(this->processor->controlUnit->RWAddr);
+}
+
+void MainWindow::catchPC()
+{
+    this->PC_lineEdit->setText(QString::number(this->processor->controlUnit->PC));
 }

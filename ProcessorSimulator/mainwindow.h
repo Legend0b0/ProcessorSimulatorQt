@@ -120,6 +120,7 @@ private:
 
     QPushButton *file_button = nullptr;
     QPushButton *PC_button = nullptr;
+    QPushButton *execute_button = nullptr;
 
     QFile *file = nullptr;
     QFile *file_RamMemory = nullptr;
@@ -215,11 +216,15 @@ protected:
 
     void verifyInstruction(QTableWidgetItem *item);
 
+    void execute();
+
 public slots:
     void darkTheme();
     void readFile();
     void textChanged(QTableWidgetItem *item);
     void sintaxeMemoryCatch(int i, int signal);
+    void catchControlUnit();
+    void catchPC();
 
 signals:
     void sintaxeMemoryThrow(int i, int signal);
