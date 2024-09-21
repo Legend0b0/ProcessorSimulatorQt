@@ -123,34 +123,27 @@ void Processor::clock()
 void Processor::LOAD()
 {
     QStringList inst = this->controlUnit->IR.split(' ');
+    inst[1].removeFirst();
 
     this->controlUnit->AAddr = "00";
     this->controlUnit->BAddr = "00";
     this->controlUnit->UlaOp = "00";
     this->controlUnit->SwitchPos = "1010";
-
-    inst[1].removeFirst();
-
-    this->controlUnit->CAddr.clear();
-    this->controlUnit->CAddr.append(this->decToBin(inst[1].toInt()));
-
-    this->controlUnit->RWAddr.clear();
-    this->controlUnit->RWAddr.append(this->decToBin(inst[2].toInt()));
+    this->controlUnit->CAddr = this->decToBin(inst[1].toInt());
+    this->controlUnit->RWAddr = this->decToBin(inst[2].toInt());
 }
 
 void Processor::STORE()
 {
-    // QStringList inst = this->controlUnit->IR->split(" ");
+    QStringList inst = this->controlUnit->IR.split(" ");
+    inst[2].removeFirst();
 
-    // this->controlUnit->AAddr = "00";
-    // this->controlUnit->BAddr = "00";
-    // this->controlUnit->UlaOp = "00";
-    // this->controlUnit->SwitchPos = "0101";
-
-    // this->controlUnit->CAddr = this->decToBin(inst[1].toInt());
-
-    // inst[2].removeFirst();
-    // this->controlUnit->RWAddr = this->decToBin(inst[2].toInt());
+    this->controlUnit->AAddr = this->decToBin(inst[2].toInt());
+    this->controlUnit->BAddr = this->decToBin(inst[2].toInt());
+    this->controlUnit->UlaOp = "01";
+    this->controlUnit->SwitchPos = "0101";
+    this->controlUnit->CAddr = "00";
+    this->controlUnit->RWAddr = this->decToBin(inst[1].toInt());
 }
 
 void Processor::MOVE()
