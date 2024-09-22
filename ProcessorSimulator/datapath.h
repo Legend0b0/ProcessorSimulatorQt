@@ -13,6 +13,8 @@ public:
     int B;
     int C;
 
+    void (*Op[4])();
+
 public slots:
     void operationAdd();
     void operationSub();
