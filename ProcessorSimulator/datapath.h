@@ -9,9 +9,9 @@ public:
     ALU();
     ~ALU();
 
-    int *A = nullptr;
-    int *B = nullptr;
-    int *C = nullptr;
+    int A;
+    int B;
+    int C;
 
 public slots:
     void operationAdd();
@@ -26,16 +26,13 @@ public:
     DataPath();
     ~DataPath();
 
-    int *R0 = nullptr;
-    int *R1 = nullptr;
-    int *R2 = nullptr;
-    int *R3 = nullptr;
+    int R[4];
 
-    int *ABus = nullptr;
-    int *BBus = nullptr;
-    int *CBus = nullptr;
+    int ABus;
+    int BBus;
+    int CBus;
 
-    int *MainMemoryBus = nullptr;
+    int MainMemoryBus;
 
     ALU *alu = nullptr;
 };

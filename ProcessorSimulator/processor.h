@@ -13,12 +13,15 @@ public:
     Processor(QObject* parent = nullptr);
     ~Processor();
 
+    bool cicle_dataPath = false;
+    bool halt = false;
+
     ControlUnit *controlUnit = nullptr;
     DataPath *dataPath = nullptr;
     QStringList *mainMemory = nullptr;
 
     int binToDec(QString bin);
-    QString decToBin(int dec);
+    QString decToBin(int dec, int bits);
     void instructionInterpretation();
     void clock();
 

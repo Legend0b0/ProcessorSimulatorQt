@@ -396,11 +396,11 @@ void MainWindow::configureDataPathWidgets()
     this->rAAdr->append(new QLabel("R2"));
     this->rBAdr->append(new QLabel("R2"));
     this->rCAdr->append(new QLabel("R2"));
-    this->rALU->append(new QLabel("A|B"));
+    this->rALU->append(new QLabel("A&B"));
     this->rAAdr->append(new QLabel("R3"));
     this->rBAdr->append(new QLabel("R3"));
     this->rCAdr->append(new QLabel("R3"));
-    this->rALU->append(new QLabel("A&B"));
+    this->rALU->append(new QLabel("A|B"));
 
     for(int i = 0; i < 4; i++)
     {
