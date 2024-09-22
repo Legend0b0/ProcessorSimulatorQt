@@ -101,15 +101,22 @@ MainWindow::~MainWindow()
     delete this->resetPC_button;
     delete this->execute_button;
 
+    delete this->time_comboBox;
+
     delete this->file;
     delete this->file_RamMemory;
 
     delete this->tableMemory;
 
     delete this->processor;
-
+    delete this->buttonsLayout;
+    delete this->buttonsLayoutWindow;
     delete this->microInstructionLayout;
     delete this->microInstructionLayoutWindow;
+    delete this->microVInstructionLayout;
+    delete this->microVInstructionLayoutWindow;
+    delete this->microHInstructionLayout;
+    delete this->microHInstructionLayoutWindow;
     delete this->irLayout;
     delete this->irLayoutWindow;
     delete this->pcLayout;
@@ -227,6 +234,9 @@ void MainWindow::createControlUnitWidgets()
     this->RWAddr_lineEdit = new QLineEdit("00000");
 
     this->resetPC_button = new QPushButton("Reset");
+    this->execute_button = new QPushButton("Execute");
+
+    this->time_comboBox = new QComboBox;
 
     this->controlUnitScroll = new QScrollArea;
 }
@@ -298,8 +308,6 @@ void MainWindow::createDataPathWidgets()
     this->BBusALU_lineEdit = new QLineEdit("0");
     this->CBusALU_lineEdit = new QLineEdit("0");
 
-    this->execute_button = new QPushButton("Execute");
-
     this->dataPathScroll = new QScrollArea;
 }
 
@@ -370,6 +378,11 @@ void MainWindow::configureControlUnitWidgets()
     this->RWAddr_lineEdit->setReadOnly(true);
 
     this->resetPC_button->setFixedWidth(60);
+
+    this->time_comboBox->insertItem(0, "10");
+    this->time_comboBox->insertItem(0, "100");
+    this->time_comboBox->insertItem(0, "1000");
+    this->time_comboBox->insertItem(0, "3000");
 }
 
 void MainWindow::configureDataPathWidgets()
@@ -485,13 +498,19 @@ void MainWindow::createLayouts()
 
 void MainWindow::createControlUnitLayouts()
 {
+    this->buttonsLayoutWindow = new QWidget;
     this->microInstructionLayoutWindow = new QWidget;
+    this->microVInstructionLayoutWindow = new QWidget;
+    this->microHInstructionLayoutWindow = new QWidget;
     this->pcirLayoutWindow = new QWidget;
     this->pcLayoutWindow = new QWidget;
     this->irLayoutWindow = new QWidget;
     this->controlUnitLayoutWindow = new QWidget;
 
+    this->buttonsLayout = new QVBoxLayout(this->buttonsLayoutWindow);
     this->microInstructionLayout = new QGridLayout(this->microInstructionLayoutWindow);
+    this->microVInstructionLayout = new QVBoxLayout(this->microVInstructionLayoutWindow);
+    this->microHInstructionLayout = new QHBoxLayout(this->microHInstructionLayoutWindow);
     this->pcirLayout = new QHBoxLayout(this->pcirLayoutWindow);
     this->pcLayout = new QHBoxLayout(this->pcLayoutWindow);
     this->irLayout = new QHBoxLayout(this->irLayoutWindow);
@@ -590,11 +609,20 @@ void MainWindow::settingControlUnitLayouts()
     this->microInstructionLayout->setRowMinimumHeight(2, 50);
     this->microInstructionLayout->setAlignment(Qt::AlignCenter);
 
+    this->microVInstructionLayout->addWidget(this->microInstruction_label);
+    this->microVInstructionLayout->addWidget(this->microInstructionLayoutWindow);
+    this->microVInstructionLayout->addWidget(this->pcirLayoutWindow);
+    this->microVInstructionLayout->setAlignment(Qt::AlignCenter);
+
+    this->buttonsLayout->addWidget(this->execute_button);
+    this->buttonsLayout->addWidget(this->time_comboBox);
+
+    this->microHInstructionLayout->addWidget(this->microVInstructionLayoutWindow);
+    this->microHInstructionLayout->addWidget(this->buttonsLayoutWindow);
+
     this->controlUnitLayout->addWidget(this->controlUnit_label);
     this->controlUnitLayout->addSpacing(30);
-    this->controlUnitLayout->addWidget(this->microInstruction_label);
-    this->controlUnitLayout->addWidget(this->microInstructionLayoutWindow);
-    this->controlUnitLayout->addWidget(this->pcirLayoutWindow);
+    this->controlUnitLayout->addWidget(this->microHInstructionLayoutWindow);
     this->controlUnitLayout->setAlignment(Qt::AlignCenter);
 
     this->controlUnitScroll->setWidget(this->controlUnitLayoutWindow);
@@ -670,7 +698,6 @@ void MainWindow::settingDataPathLayouts()
     this->registerBankLayout->addWidget(this->arrowAAdrToABus, 1, 2);
     this->registerBankLayout->addWidget(this->arrowBAdrToBBus, 1, 3);
     this->registerBankLayout->addWidget(this->cBusLayoutWindow, 2, 0);
-    this->registerBankLayout->addWidget(this->execute_button, 2, 1);
     this->registerBankLayout->addWidget(this->aBusLayoutWindow, 2, 2);
     this->registerBankLayout->addWidget(this->bBusLayoutWindow, 2, 3);
     this->registerBankLayout->addWidget(this->arrowCBusToMMBus, 3, 0);
@@ -888,6 +915,7 @@ void MainWindow::resetPC()
 
 void MainWindow::execute()
 {
+
     for(int i = 0; i < 32; i++)
     {
         if(this->tableMemory->item(i,2)->text() == "Syntax Error")
@@ -897,12 +925,31 @@ void MainWindow::execute()
         }
     }
 
+    this->processor->halt = false;
+
     for(int i = 0; i < 32; i++)
     {
         this->processor->mainMemory->replace(i, this->tableMemory->item(i, 1)->text());
     }
 
+    //this->execute_button->setText("Halt");
+    //QObject::disconnect(this->execute_button);
+    //QObject::connect(this->execute_button, &QPushButton::clicked, this, &MainWindow::halt);
+
+    this->processor->time = this->time_comboBox->currentText().toInt();
+
     this->processor->clock();
+
+    return;
+}
+
+void MainWindow::halt()
+{
+    this->processor->halt = true;
+
+    this->execute_button->setText("Execute");
+    QObject::disconnect(this->execute_button);
+    QObject::connect(this->execute_button, &QPushButton::clicked, this, &MainWindow::execute);
 
     return;
 }

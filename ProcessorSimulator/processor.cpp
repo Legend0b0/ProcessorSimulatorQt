@@ -8,7 +8,7 @@ Processor::Processor(QObject*)
 
     this->mainMemory->fill("0", 32);
 
-    this->time = 10;
+    this->time = 1000;
 }
 
 Processor::~Processor()
@@ -246,8 +246,6 @@ void Processor::clock()
             emit this->updateRegisters();
         }
     }
-
-    this->halt = false;
 }
 
 void Processor::LOAD()
@@ -262,7 +260,6 @@ void Processor::LOAD()
     this->controlUnit->CAddr = this->decToBin(inst[1].toInt(), 2);
     this->controlUnit->RWAddr = this->decToBin(inst[2].toInt(), 5);
 
-    this->halt = false;
     this->changePC = false;
     this->cicle_dataPath = true;
 }
@@ -279,7 +276,6 @@ void Processor::STORE()
     this->controlUnit->CAddr = this->decToBin(0, 2);
     this->controlUnit->RWAddr = this->decToBin(inst[1].toInt(), 5);
 
-    this->halt = false;
     this->changePC = false;
     this->cicle_dataPath = true;
 }
@@ -297,7 +293,6 @@ void Processor::MOVE()
     this->controlUnit->CAddr = this->decToBin(inst[1].toInt(), 2);
     this->controlUnit->RWAddr = this->decToBin(0, 5);
 
-    this->halt = false;
     this->changePC = false;
     this->cicle_dataPath = true;
 }
@@ -316,7 +311,6 @@ void Processor::ADD()
     this->controlUnit->CAddr = this->decToBin(inst[1].toInt(), 2);
     this->controlUnit->RWAddr = this->decToBin(0, 5);
 
-    this->halt = false;
     this->changePC = false;
     this->cicle_dataPath = true;
 }
@@ -335,7 +329,6 @@ void Processor::SUB()
     this->controlUnit->CAddr = this->decToBin(inst[1].toInt(), 2);
     this->controlUnit->RWAddr = this->decToBin(0, 5);
 
-    this->halt = false;
     this->changePC = false;
     this->cicle_dataPath = true;
 }
@@ -354,7 +347,6 @@ void Processor::AND()
     this->controlUnit->CAddr = this->decToBin(inst[1].toInt(), 2);
     this->controlUnit->RWAddr = this->decToBin(0, 5);
 
-    this->halt = false;
     this->changePC = false;
     this->cicle_dataPath = true;
 }
@@ -373,7 +365,6 @@ void Processor::OR()
     this->controlUnit->CAddr = this->decToBin(inst[1].toInt(), 2);
     this->controlUnit->RWAddr = this->decToBin(0, 5);
 
-    this->halt = false;
     this->changePC = false;
     this->cicle_dataPath = true;
 }
@@ -384,7 +375,6 @@ void Processor::BRANCH()
 
     this->controlUnit->PC = inst[1].toInt();
 
-    this->halt = false;
     this->changePC = true;
     this->cicle_dataPath = false;
 }
@@ -404,7 +394,6 @@ void Processor::BZERO()
         this->changePC = false;
     }
 
-    this->halt = false;
     this->cicle_dataPath = false;
 }
 
@@ -423,7 +412,6 @@ void Processor::BNEG()
         this->changePC = false;
     }
 
-    this->halt = false;
     this->cicle_dataPath = false;
 }
 
@@ -436,7 +424,6 @@ void Processor::NOP()
     this->controlUnit->CAddr = this->decToBin(0, 2);
     this->controlUnit->RWAddr = this->decToBin(0, 5);
 
-    this->halt = false;
     this->changePC = false;
     this->cicle_dataPath = false;
 }

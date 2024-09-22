@@ -8,6 +8,7 @@
 #include <QGridLayout>
 #include <QFormLayout>
 #include <QPushButton>
+#include <QComboBox>
 #include <QDebug>
 #include <QSplitter>
 #include <QScrollArea>
@@ -109,6 +110,8 @@ private:
     QPushButton *resetPC_button = nullptr;
     QPushButton *execute_button = nullptr;
 
+    QComboBox *time_comboBox = nullptr;
+
     QFile *file = nullptr;
     QFile *file_RamMemory = nullptr;
 
@@ -122,7 +125,10 @@ private:
     QScrollArea *dataPathScroll = nullptr;
 
     // Layouts Widgets
+    QWidget *buttonsLayoutWindow = nullptr;
     QWidget *microInstructionLayoutWindow = nullptr;
+    QWidget *microVInstructionLayoutWindow = nullptr;
+    QWidget *microHInstructionLayoutWindow = nullptr;
     QWidget *pcirLayoutWindow = nullptr;
     QWidget *pcLayoutWindow = nullptr;
     QWidget *irLayoutWindow = nullptr;
@@ -150,7 +156,10 @@ private:
     QWidget *mainLayoutWindow = nullptr;
 
     // Layouts
+    QVBoxLayout *buttonsLayout = nullptr;
     QGridLayout *microInstructionLayout = nullptr;
+    QVBoxLayout *microVInstructionLayout = nullptr;
+    QHBoxLayout *microHInstructionLayout = nullptr;
     QHBoxLayout *pcirLayout = nullptr;
     QHBoxLayout *pcLayout = nullptr;
     QHBoxLayout *irLayout = nullptr;
@@ -213,6 +222,7 @@ public slots:
 
     void resetPC();
     void execute();
+    void halt();
 
     void instructionUpdated();
     void irUpdated();
