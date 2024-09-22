@@ -46,6 +46,7 @@ MainWindow::~MainWindow()
     delete this->ABusALU_label;
     delete this->BBusALU_label;
     delete this->CBusALU_label;
+    delete this->ALU_label;
     this->rAAdr->clear();
     delete this->rAAdr;
     this->rBAdr->clear();
@@ -69,20 +70,12 @@ MainWindow::~MainWindow()
 
     delete this->memory_label;
 
-    delete this->arrowBTop;
-    delete this->arrowBBot;
-    delete this->arrowBRight;
-    delete this->arrowBLeft;
-    delete this->arrowBTopLeft;
-    delete this->arrowRTop;
-    delete this->arrowRBot;
-    delete this->arrowRRight;
-    delete this->arrowRLeft;
-    delete this->arrowRTopLeft;
-    delete this->ballArrowTop;
-    delete this->ballArrowBot;
-    delete this->ballArrowRight;
-    delete this->ballArrowLeft;
+    this->arrowBlue->clear();
+    delete this->arrowBlue;
+    this->arrowRed->clear();
+    delete this->arrowRed;
+    this->ballArrow->clear();
+    delete this->ballArrow;
 
     delete this->PC_lineEdit;
     delete this->IR_lineEdit;
@@ -93,10 +86,9 @@ MainWindow::~MainWindow()
     delete this->CAddr_lineEdit;
     delete this->RWAddr_lineEdit;
 
-    delete this->R0_lineEdit;
-    delete this->R1_lineEdit;
-    delete this->R2_lineEdit;
-    delete this->R3_lineEdit;
+    this->R_lineEdit->clear();
+    delete this->R_lineEdit;
+
     delete this->ABus_lineEdit;
     delete this->BBus_lineEdit;
     delete this->CBus_lineEdit;
@@ -106,7 +98,7 @@ MainWindow::~MainWindow()
     delete this->CBusALU_lineEdit;
 
     delete this->file_button;
-    delete this->PC_button;
+    delete this->resetPC_button;
     delete this->execute_button;
 
     delete this->file;
@@ -148,8 +140,10 @@ MainWindow::~MainWindow()
     delete this->bBusALULayoutWindow;
     delete this->cBusALULayout;
     delete this->cBusALULayoutWindow;
-    delete this->aluLayout;
-    delete this->aluLayoutWindow;
+    delete this->aluFormLayout;
+    delete this->aluFormLayoutWindow;
+    delete this->aluVLayout;
+    delete this->aluVLayoutWindow;
     delete this->registersLayout;
     delete this->registersLayoutWindow;
     delete this->registerBankLayout;
@@ -186,20 +180,23 @@ void MainWindow::createWidgets()
     this->createDataPathWidgets();
     this->createMainMemoryWidgets();
 
-    this->arrowBTop = new QPixmap(":/img/ArrowBTop.png");
-    this->arrowBBot = new QPixmap(":/img/ArrowBBot.png");
-    this->arrowBRight = new QPixmap(":/img/ArrowBRight.png");
-    this->arrowBLeft = new QPixmap(":/img/ArrowBLeft.png");
-    this->arrowBTopLeft = new QPixmap(":/img/ArrowBTopLeft.png");
-    this->arrowRTop = new QPixmap(":/img/ArrowRTop.png");
-    this->arrowRBot = new QPixmap(":/img/ArrowRBot.png");
-    this->arrowRRight = new QPixmap(":/img/ArrowRRight.png");
-    this->arrowRLeft = new QPixmap(":/img/ArrowRLeft.png");
-    this->arrowRTopLeft = new QPixmap(":/img/ArrowRTopLeft.png");
-    this->ballArrowTop = new QPixmap(":/img/BallArrowTop.png");
-    this->ballArrowBot = new QPixmap(":/img/BallArrowBot.png");
-    this->ballArrowRight = new QPixmap(":/img/BallArrowRight.png");
-    this->ballArrowLeft = new QPixmap(":/img/BallArrowLeft.png");
+    this->arrowBlue = new QVector<QPixmap*>;
+    this->arrowRed = new QVector<QPixmap*>;
+    this->ballArrow = new QVector<QPixmap*>;
+    this->arrowBlue->append(new QPixmap(":/img/ArrowBTop.png"));
+    this->arrowBlue->append(new QPixmap(":/img/ArrowBRight.png"));
+    this->arrowBlue->append(new QPixmap(":/img/ArrowBBot.png"));
+    this->arrowBlue->append(new QPixmap(":/img/ArrowBLeft.png"));
+    this->arrowBlue->append(new QPixmap(":/img/ArrowBTopLeft.png"));
+    this->arrowRed->append(new QPixmap(":/img/ArrowRTop.png"));
+    this->arrowRed->append(new QPixmap(":/img/ArrowRRight.png"));
+    this->arrowRed->append(new QPixmap(":/img/ArrowRBot.png"));
+    this->arrowRed->append(new QPixmap(":/img/ArrowRLeft.png"));
+    this->arrowRed->append(new QPixmap(":/img/ArrowRTopLeft.png"));
+    this->ballArrow->append(new QPixmap(":/img/BallArrowTop.png"));
+    this->ballArrow->append(new QPixmap(":/img/BallArrowRight.png"));
+    this->ballArrow->append(new QPixmap(":/img/BallArrowBot.png"));
+    this->ballArrow->append(new QPixmap(":/img/BallArrowLeft.png"));
 
     this->processor = new Processor(this);
 }
@@ -229,7 +226,7 @@ void MainWindow::createControlUnitWidgets()
     this->CAddr_lineEdit = new QLineEdit("00");
     this->RWAddr_lineEdit = new QLineEdit("00000");
 
-    this->PC_button = new QPushButton("Reset");
+    this->resetPC_button = new QPushButton("Reset");
 
     this->controlUnitScroll = new QScrollArea;
 }
@@ -252,6 +249,7 @@ void MainWindow::createDataPathWidgets()
     this->ABusALU_label = new QLabel("A:");
     this->BBusALU_label = new QLabel("B:");
     this->CBusALU_label = new QLabel("C:");
+    this->ALU_label = new QLabel("Arithmetic and Logic Unit (ALU)");
     this->arrowAAdrToABus = new QLabel;
     this->arrowBAdrToBBus = new QLabel;
     this->arrowABusToALU = new QLabel;
@@ -269,11 +267,29 @@ void MainWindow::createDataPathWidgets()
     this->rBAdr = new QVector<QLabel*>;
     this->rCAdr = new QVector<QLabel*>;
     this->rALU = new QVector<QLabel*>;
+    this->rAAdr->append(new QLabel("R0"));
+    this->rBAdr->append(new QLabel("R0"));
+    this->rCAdr->append(new QLabel("R0"));
+    this->rALU->append(new QLabel("A+B"));
+    this->rAAdr->append(new QLabel("R1"));
+    this->rBAdr->append(new QLabel("R1"));
+    this->rCAdr->append(new QLabel("R1"));
+    this->rALU->append(new QLabel("A-B"));
+    this->rAAdr->append(new QLabel("R2"));
+    this->rBAdr->append(new QLabel("R2"));
+    this->rCAdr->append(new QLabel("R2"));
+    this->rALU->append(new QLabel("A&B"));
+    this->rAAdr->append(new QLabel("R3"));
+    this->rBAdr->append(new QLabel("R3"));
+    this->rCAdr->append(new QLabel("R3"));
+    this->rALU->append(new QLabel("A|B"));
 
-    this->R0_lineEdit = new QLineEdit("0");
-    this->R1_lineEdit = new QLineEdit("0");
-    this->R2_lineEdit = new QLineEdit("0");
-    this->R3_lineEdit = new QLineEdit("0");
+    this->R_lineEdit = new QVector<QLineEdit*>;
+    this->R_lineEdit->append(new QLineEdit("0"));
+    this->R_lineEdit->append(new QLineEdit("0"));
+    this->R_lineEdit->append(new QLineEdit("0"));
+    this->R_lineEdit->append(new QLineEdit("0"));
+
     this->ABus_lineEdit = new QLineEdit("0");
     this->BBus_lineEdit = new QLineEdit("0");
     this->CBus_lineEdit = new QLineEdit("0");
@@ -323,8 +339,8 @@ void MainWindow::configureControlUnitWidgets()
     this->RWAddr_label->setAlignment(Qt::AlignCenter);
     this->arrowIRToMIR->setAlignment(Qt::AlignBottom|Qt::AlignRight);
 
-    this->arrowIRToPC->setPixmap(arrowBLeft->scaled(30, 30, Qt::KeepAspectRatio));
-    this->arrowIRToMIR->setPixmap(arrowBTop->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowIRToPC->setPixmap(arrowBlue->at(3)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowIRToMIR->setPixmap(arrowBlue->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
 
     this->PC_lineEdit->setAlignment(Qt::AlignCenter);
     this->IR_lineEdit->setAlignment(Qt::AlignCenter);
@@ -344,7 +360,16 @@ void MainWindow::configureControlUnitWidgets()
     this->CAddr_lineEdit->setFixedWidth(50);
     this->RWAddr_lineEdit->setFixedWidth(80);
 
-    this->PC_button->setFixedWidth(60);
+    this->PC_lineEdit->setReadOnly(true);
+    this->IR_lineEdit->setReadOnly(true);
+    this->AAddr_lineEdit->setReadOnly(true);
+    this->BAddr_lineEdit->setReadOnly(true);
+    this->AluOp_lineEdit->setReadOnly(true);
+    this->SwitchPos_lineEdit->setReadOnly(true);
+    this->CAddr_lineEdit->setReadOnly(true);
+    this->RWAddr_lineEdit->setReadOnly(true);
+
+    this->resetPC_button->setFixedWidth(60);
 }
 
 void MainWindow::configureDataPathWidgets()
@@ -359,19 +384,21 @@ void MainWindow::configureDataPathWidgets()
     this->BBus_label->setAlignment(Qt::AlignCenter);
     this->CBus_label->setAlignment(Qt::AlignCenter);
     this->MMBus_label->setAlignment(Qt::AlignCenter);
+    this->ALU_label->setAlignment(Qt::AlignCenter);
 
-    this->arrowAAdrToABus->setPixmap(arrowBBot->scaled(30, 30, Qt::KeepAspectRatio));
-    this->arrowBAdrToBBus->setPixmap(arrowBBot->scaled(30, 30, Qt::KeepAspectRatio));
-    this->arrowABusToALU->setPixmap(arrowBBot->scaled(30, 30, Qt::KeepAspectRatio));
-    this->arrowBBusToALU->setPixmap(arrowBBot->scaled(30, 30, Qt::KeepAspectRatio));
-    this->arrowALUToCBus->setPixmap(arrowBTopLeft->scaled(30, 30, Qt::KeepAspectRatio));
-    this->arrowCBusToMMBus->setPixmap(arrowBBot->scaled(30, 30, Qt::KeepAspectRatio));
-    this->arrowMMBusToCBus->setPixmap(arrowBTop->scaled(30, 30, Qt::KeepAspectRatio));
-    this->arrowCBusToCAdr->setPixmap(arrowBTop->scaled(30, 30, Qt::KeepAspectRatio));
-    this->ballArrowAAdr->setPixmap(ballArrowTop->scaled(30, 30, Qt::KeepAspectRatio));
-    this->ballArrowBAdr->setPixmap(ballArrowTop->scaled(30, 30, Qt::KeepAspectRatio));
-    this->ballArrowCAdr->setPixmap(ballArrowTop->scaled(30, 30, Qt::KeepAspectRatio));
-    this->ballArrowALU->setPixmap(ballArrowTop->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowAAdrToABus->setPixmap(arrowBlue->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowBAdrToBBus->setPixmap(arrowBlue->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowABusToALU->setPixmap(arrowBlue->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowBBusToALU->setPixmap(arrowBlue->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowALUToCBus->setPixmap(arrowBlue->at(4)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowCBusToMMBus->setPixmap(arrowBlue->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowMMBusToCBus->setPixmap(arrowBlue->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowCBusToCAdr->setPixmap(arrowBlue->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowAAdr->setPixmap(ballArrow->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowBAdr->setPixmap(ballArrow->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowCAdr->setPixmap(ballArrow->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowALU->setPixmap(ballArrow->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+
     this->arrowAAdrToABus->setAlignment(Qt::AlignCenter);
     this->arrowBAdrToBBus->setAlignment(Qt::AlignCenter);
     this->arrowABusToALU->setAlignment(Qt::AlignCenter);
@@ -385,23 +412,6 @@ void MainWindow::configureDataPathWidgets()
     this->ballArrowCAdr->setAlignment(Qt::AlignCenter);
     this->ballArrowALU->setAlignment(Qt::AlignCenter);
 
-    this->rAAdr->append(new QLabel("R0"));
-    this->rBAdr->append(new QLabel("R0"));
-    this->rCAdr->append(new QLabel("R0"));
-    this->rALU->append(new QLabel("A+B"));
-    this->rAAdr->append(new QLabel("R1"));
-    this->rBAdr->append(new QLabel("R1"));
-    this->rCAdr->append(new QLabel("R1"));
-    this->rALU->append(new QLabel("A-B"));
-    this->rAAdr->append(new QLabel("R2"));
-    this->rBAdr->append(new QLabel("R2"));
-    this->rCAdr->append(new QLabel("R2"));
-    this->rALU->append(new QLabel("A&B"));
-    this->rAAdr->append(new QLabel("R3"));
-    this->rBAdr->append(new QLabel("R3"));
-    this->rCAdr->append(new QLabel("R3"));
-    this->rALU->append(new QLabel("A|B"));
-
     for(int i = 0; i < 4; i++)
     {
         this->rAAdr->at(i)->setAlignment(Qt::AlignCenter);
@@ -409,6 +419,18 @@ void MainWindow::configureDataPathWidgets()
         this->rCAdr->at(i)->setAlignment(Qt::AlignCenter);
         this->rALU->at(i)->setAlignment(Qt::AlignCenter);
     }
+
+    this->R_lineEdit->at(0)->setReadOnly(true);
+    this->R_lineEdit->at(1)->setReadOnly(true);
+    this->R_lineEdit->at(2)->setReadOnly(true);
+    this->R_lineEdit->at(3)->setReadOnly(true);
+    this->ABus_lineEdit->setReadOnly(true);
+    this->BBus_lineEdit->setReadOnly(true);
+    this->CBus_lineEdit->setReadOnly(true);
+    this->MMBus_lineEdit->setReadOnly(true);
+    this->ABusALU_lineEdit->setReadOnly(true);
+    this->BBusALU_lineEdit->setReadOnly(true);
+    this->CBusALU_lineEdit->setReadOnly(true);
 }
 
 void MainWindow::configureMainMemoryWidgets()
@@ -489,7 +511,8 @@ void MainWindow::createDataPathLayouts()
     this->aBusALULayoutWindow = new QWidget;
     this->bBusALULayoutWindow = new QWidget;
     this->cBusALULayoutWindow = new QWidget;
-    this->aluLayoutWindow = new QWidget;
+    this->aluFormLayoutWindow = new QWidget;
+    this->aluVLayoutWindow = new QWidget;
     this->registersLayoutWindow = new QWidget;
     this->registerBankLayoutWindow = new QWidget;
     this->dataPathLayoutWindow = new QWidget;
@@ -505,7 +528,8 @@ void MainWindow::createDataPathLayouts()
     this->aBusALULayout = new QHBoxLayout(this->aBusALULayoutWindow);
     this->bBusALULayout = new QHBoxLayout(this->bBusALULayoutWindow);
     this->cBusALULayout = new QHBoxLayout(this->cBusALULayoutWindow);
-    this->aluLayout = new QGridLayout(this->aluLayoutWindow);
+    this->aluFormLayout = new QFormLayout(this->aluFormLayoutWindow);
+    this->aluVLayout = new QVBoxLayout(this->aluVLayoutWindow);
     this->registersLayout = new QFormLayout(this->registersLayoutWindow);
     this->registerBankLayout = new QGridLayout(this->registerBankLayoutWindow);
     this->dataPathLayout = new QVBoxLayout(this->dataPathLayoutWindow);
@@ -538,7 +562,7 @@ void MainWindow::settingControlUnitLayouts()
 {
     this->pcLayout->addWidget(this->PC_label);
     this->pcLayout->addWidget(this->PC_lineEdit);
-    this->pcLayout->addWidget(this->PC_button);
+    this->pcLayout->addWidget(this->resetPC_button);
 
     this->irLayout->addWidget(this->IR_label);
     this->irLayout->addWidget(this->IR_lineEdit);
@@ -567,7 +591,7 @@ void MainWindow::settingControlUnitLayouts()
     this->microInstructionLayout->setAlignment(Qt::AlignCenter);
 
     this->controlUnitLayout->addWidget(this->controlUnit_label);
-    this->controlUnitLayout->addSpacing(50);
+    this->controlUnitLayout->addSpacing(30);
     this->controlUnitLayout->addWidget(this->microInstruction_label);
     this->controlUnitLayout->addWidget(this->microInstructionLayoutWindow);
     this->controlUnitLayout->addWidget(this->pcirLayoutWindow);
@@ -618,10 +642,10 @@ void MainWindow::settingDataPathLayouts()
     this->mmBusLayout->addWidget(this->MMBus_label);
     this->mmBusLayout->addWidget(this->MMBus_lineEdit);
 
-    this->registersLayout->addRow(this->R0_label, this->R0_lineEdit);
-    this->registersLayout->addRow(this->R1_label, this->R1_lineEdit);
-    this->registersLayout->addRow(this->R2_label, this->R2_lineEdit);
-    this->registersLayout->addRow(this->R3_label, this->R3_lineEdit);
+    this->registersLayout->addRow(this->R0_label, this->R_lineEdit->at(0));
+    this->registersLayout->addRow(this->R1_label, this->R_lineEdit->at(1));
+    this->registersLayout->addRow(this->R2_label, this->R_lineEdit->at(2));
+    this->registersLayout->addRow(this->R3_label, this->R_lineEdit->at(3));
 
     this->aBusALULayout->addWidget(this->ABusALU_label);
     this->aBusALULayout->addWidget(this->ABusALU_lineEdit);
@@ -632,11 +656,11 @@ void MainWindow::settingDataPathLayouts()
     this->cBusALULayout->addWidget(this->CBusALU_label);
     this->cBusALULayout->addWidget(this->CBusALU_lineEdit);
 
-    this->aluLayout->addWidget(new QLabel("Arietmetric Logic Unit"), 0, 0);
-    this->aluLayout->addWidget(aBusALULayoutWindow, 1, 0);
-    this->aluLayout->addWidget(bBusALULayoutWindow, 1, 1);
-    this->aluLayout->addWidget(cBusALULayoutWindow, 2, 0);
-    this->aluLayout->addWidget(aluArrowLayoutWindow, 2, 1);
+    this->aluFormLayout->addRow(this->aBusALULayoutWindow, this->bBusALULayoutWindow);
+    this->aluFormLayout->addRow(this->cBusALULayoutWindow, this->aluArrowLayoutWindow);
+
+    this->aluVLayout->addWidget(this->ALU_label);
+    this->aluVLayout->addWidget(this->aluFormLayoutWindow);
 
     this->registerBankLayout->addWidget(this->cAdrLayoutWindow, 0, 0);
     this->registerBankLayout->addWidget(this->registersLayoutWindow, 0, 1);
@@ -655,10 +679,10 @@ void MainWindow::settingDataPathLayouts()
     this->registerBankLayout->addWidget(this->arrowABusToALU, 3, 2);
     this->registerBankLayout->addWidget(this->arrowBBusToALU, 3, 3);
     this->registerBankLayout->addWidget(this->mmBusLayoutWindow, 4, 0);
-    this->registerBankLayout->addWidget(this->aluLayoutWindow, 4, 2, 4, 3);
+    this->registerBankLayout->addWidget(this->aluVLayoutWindow, 4, 2, 4, 3);
 
     this->dataPathLayout->addWidget(this->dataPath_label);
-    this->dataPathLayout->addSpacing(50);
+    this->dataPathLayout->addSpacing(30);
     this->dataPathLayout->addWidget(this->registerBank_label);
     this->dataPathLayout->addWidget(this->registerBankLayoutWindow);
     this->dataPathLayout->setAlignment(Qt::AlignCenter);
@@ -678,11 +702,28 @@ void MainWindow::settingMainMemoryLayouts()
 void MainWindow::connects()
 {
     QObject::connect(this, &MainWindow::sintaxeMemoryThrow, this, &MainWindow::sintaxeMemoryCatch);
+    QObject::connect(this->resetPC_button, &QPushButton::clicked, this, &MainWindow::resetPC);
     QObject::connect(this->execute_button, &QPushButton::clicked, this, &MainWindow::execute);
     QObject::connect(this->file_button, &QPushButton::clicked, this, &MainWindow::readFile);
     QObject::connect(this->tableMemory, &QTableWidget::itemChanged, this, &MainWindow::textChanged);
-    QObject::connect(this->processor, &Processor::throwControlUnit, this, &MainWindow::catchControlUnit);
-    QObject::connect(this->processor, &Processor::throwPC, this, &MainWindow::catchPC);
+
+    QObject::connect(this->processor, &Processor::updateInstruction, this, &MainWindow::instructionUpdated);
+    QObject::connect(this->processor, &Processor::updateIR, this, &MainWindow::irUpdated);
+    QObject::connect(this->processor, &Processor::updateArrowsControlUnit, this, &MainWindow::arrowsControlUnitUpdated);
+    QObject::connect(this->processor, &Processor::updatePC, this, &MainWindow::pcUpdated);
+    QObject::connect(this->processor, &Processor::updateControlUnit, this, &MainWindow::controlUnitUpdated);
+    QObject::connect(this->processor, &Processor::updateAaddr_Baddr, this, &MainWindow::Aaddr_BaddrUpdated);
+    QObject::connect(this->processor, &Processor::updateABus_BBus, this, &MainWindow::ABus_BBusUpdated);
+    QObject::connect(this->processor, &Processor::updateALU_1, this, &MainWindow::ALU_1Updated);
+    QObject::connect(this->processor, &Processor::updateALU_2, this, &MainWindow::ALU_2Updated);
+    QObject::connect(this->processor, &Processor::updateArrowAluToCBus, this, &MainWindow::ArrowAluToCBusUpdated);
+    QObject::connect(this->processor, &Processor::updateCBus, this, &MainWindow::CBusUpdated);
+    QObject::connect(this->processor, &Processor::updateArrowCBusToMMBus, this, &MainWindow::ArrowCBusToMMBusUpdated);
+    QObject::connect(this->processor, &Processor::updateMMBus, this, &MainWindow::MMBusUpdated);
+    QObject::connect(this->processor, &Processor::updateMainMemory, this, &MainWindow::MainMemoryUpdated);
+    QObject::connect(this->processor, &Processor::updateArrowMMBusToCBus, this, &MainWindow::ArrowMMBusToCBusUpdated);
+    QObject::connect(this->processor, &Processor::updateArrowCBusToCAdr, this, &MainWindow::ArrowCBusToCAdrUpdated);
+    QObject::connect(this->processor, &Processor::updateRegisters, this, &MainWindow::RegistersUpdated);
 }
 
 void MainWindow::verifyInstruction(QTableWidgetItem *item)
@@ -698,26 +739,6 @@ void MainWindow::verifyInstruction(QTableWidgetItem *item)
     }
 
     emit sintaxeMemoryThrow(item->row(), 2);
-    return;
-}
-
-void MainWindow::execute()
-{
-    for(int i = 0; i < 32; i++)
-    {
-        if(this->tableMemory->item(i,2)->text() == "Syntax Error")
-        {
-            QMessageBox::information(this,"Error","Syntax Error at Main Memory");
-            return;
-        }
-    }
-
-    for(int i = 0; i < 32; i++)
-    {
-        this->processor->mainMemory->replace(i, this->tableMemory->item(i, 1)->text());
-    }
-
-    this->processor->clock();
     return;
 }
 
@@ -753,13 +774,10 @@ void MainWindow::readFile()
     QTextStream out(file_RamMemory);
     QTextStream in(file);
 
-    for(int i=0; !in.atEnd(); i++)
-    {
-        if(i > 31)
-        {
-            break;
-        }
+    int i = 0;
 
+    for(; ((!in.atEnd()) && (i < 32)); i++)
+    {
         line = in.readLine();
         if(line.isNull())
         {
@@ -770,6 +788,11 @@ void MainWindow::readFile()
             out << line << "\n";
             tableMemory->item(i, 1)->setText(line);
         }
+    }
+
+    for(; i < 32; i++)
+    {
+        tableMemory->item(i, 1)->setText("0");
     }
 
     file->close();
@@ -857,18 +880,265 @@ void MainWindow::sintaxeMemoryCatch(int i, int signal)
     }
 }
 
-void MainWindow::catchControlUnit()
+void MainWindow::resetPC()
 {
-    this->IR_lineEdit->setText(this->processor->controlUnit->IR);
-    this->AAddr_lineEdit->setText(this->processor->controlUnit->AAddr);
-    this->BAddr_lineEdit->setText(this->processor->controlUnit->BAddr);
-    this->AluOp_lineEdit->setText(this->processor->controlUnit->UlaOp);
-    this->SwitchPos_lineEdit->setText(this->processor->controlUnit->SwitchPos);
-    this->CAddr_lineEdit->setText(this->processor->controlUnit->CAddr);
-    this->RWAddr_lineEdit->setText(this->processor->controlUnit->RWAddr);
+    this->processor->controlUnit->PC = 0;
+    this->PC_lineEdit->setText(QString::number(this->processor->controlUnit->PC));
 }
 
-void MainWindow::catchPC()
+void MainWindow::execute()
+{
+    for(int i = 0; i < 32; i++)
+    {
+        if(this->tableMemory->item(i,2)->text() == "Syntax Error")
+        {
+            QMessageBox::information(this,"Error","Syntax Error at Main Memory");
+            return;
+        }
+    }
+
+    for(int i = 0; i < 32; i++)
+    {
+        this->processor->mainMemory->replace(i, this->tableMemory->item(i, 1)->text());
+    }
+
+    this->processor->clock();
+
+    return;
+}
+
+void MainWindow::instructionUpdated()
+{
+    // Pisca PC
+    // Pisca Linha da Main Memory
+    this->PC_lineEdit->setStyleSheet("color: red;");
+    this->processor->delay(this->processor->time);
+    this->PC_lineEdit->setStyleSheet("color: black;");
+
+    this->tableMemory->item(this->processor->controlUnit->PC, 1)->setForeground(QBrush(QColor(255, 0, 0)));
+    this->processor->delay(this->processor->time);
+    this->tableMemory->item(this->processor->controlUnit->PC, 1)->setForeground(QBrush(QColor(0, 0, 0)));
+
+}
+
+void MainWindow::irUpdated()
+{
+    this->IR_lineEdit->setText(this->processor->controlUnit->IR);
+
+    this->IR_lineEdit->setStyleSheet("color: red;");
+    this->processor->delay(this->processor->time);
+    this->IR_lineEdit->setStyleSheet("color: black;");
+}
+
+void MainWindow::arrowsControlUnitUpdated()
+{
+    // Pisca ArrowIRtoPC
+    this->arrowIRToPC->setPixmap(arrowRed->at(3)->scaled(30, 30, Qt::KeepAspectRatio));
+    if(this->processor->cicle_dataPath)
+    {
+        // Pisca ArrowIRtoMIR
+        this->arrowIRToMIR->setPixmap(arrowRed->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+    }
+
+    this->processor->delay(this->processor->time);
+
+    this->arrowIRToPC->setPixmap(arrowBlue->at(3)->scaled(30, 30, Qt::KeepAspectRatio));
+    if(this->processor->cicle_dataPath)
+    {
+        this->arrowIRToMIR->setPixmap(arrowBlue->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+    }
+}
+
+void MainWindow::pcUpdated()
 {
     this->PC_lineEdit->setText(QString::number(this->processor->controlUnit->PC));
+
+    this->PC_lineEdit->setStyleSheet("color: red;");
+    this->processor->delay(this->processor->time);
+    this->PC_lineEdit->setStyleSheet("color: black;");
+}
+
+void MainWindow::controlUnitUpdated()
+{
+    this->PC_lineEdit->setText(QString::number(this->processor->controlUnit->PC));
+
+    this->PC_lineEdit->setStyleSheet("color: red;");
+
+    if(this->processor->cicle_dataPath)
+    {
+        this->AAddr_lineEdit->setText(this->processor->controlUnit->AAddr);
+        this->BAddr_lineEdit->setText(this->processor->controlUnit->BAddr);
+        this->AluOp_lineEdit->setText(this->processor->controlUnit->UlaOp);
+        this->SwitchPos_lineEdit->setText(this->processor->controlUnit->SwitchPos);
+        this->CAddr_lineEdit->setText(this->processor->controlUnit->CAddr);
+        this->RWAddr_lineEdit->setText(this->processor->controlUnit->RWAddr);
+
+        this->AAddr_lineEdit->setStyleSheet("color: red;");
+        this->BAddr_lineEdit->setStyleSheet("color: red;");
+        this->AluOp_lineEdit->setStyleSheet("color: red;");
+        this->SwitchPos_lineEdit->setStyleSheet("color: red;");
+        this->CAddr_lineEdit->setStyleSheet("color: red;");
+        this->RWAddr_lineEdit->setStyleSheet("color: red;");
+    }
+
+    this->processor->delay(this->processor->time);
+
+    if(this->processor->cicle_dataPath)
+    {
+        this->AAddr_lineEdit->setStyleSheet("color: black;");
+        this->BAddr_lineEdit->setStyleSheet("color: black;");
+        this->AluOp_lineEdit->setStyleSheet("color: black;");
+        this->SwitchPos_lineEdit->setStyleSheet("color: black;");
+        this->CAddr_lineEdit->setStyleSheet("color: black;");
+        this->RWAddr_lineEdit->setStyleSheet("color: black;");
+    }
+
+    this->PC_lineEdit->setStyleSheet("color: black;");
+
+    //Arrumar BallArrows
+    this->ballArrowAAdr->setPixmap(ballArrow->at(this->processor->binToDec(this->processor->controlUnit->AAddr))->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowBAdr->setPixmap(ballArrow->at(this->processor->binToDec(this->processor->controlUnit->BAddr))->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowCAdr->setPixmap(ballArrow->at(this->processor->binToDec(this->processor->controlUnit->CAddr))->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowALU->setPixmap(ballArrow->at(this->processor->binToDec(this->processor->controlUnit->UlaOp))->scaled(30, 30, Qt::KeepAspectRatio));
+}
+
+void MainWindow::Aaddr_BaddrUpdated()
+{
+    // Pisca Registradores q são usados
+    this->R_lineEdit->at(this->processor->binToDec(this->processor->controlUnit->AAddr))->setText(QString::number(this->processor->dataPath->R[this->processor->binToDec(this->processor->controlUnit->AAddr)]));
+    this->R_lineEdit->at(this->processor->binToDec(this->processor->controlUnit->BAddr))->setText(QString::number(this->processor->dataPath->R[this->processor->binToDec(this->processor->controlUnit->BAddr)]));
+
+    this->R_lineEdit->at(this->processor->binToDec(this->processor->controlUnit->AAddr))->setStyleSheet("color: red;");
+    this->R_lineEdit->at(this->processor->binToDec(this->processor->controlUnit->BAddr))->setStyleSheet("color: red;");
+    this->processor->delay(this->processor->time);
+    this->R_lineEdit->at(this->processor->binToDec(this->processor->controlUnit->AAddr))->setStyleSheet("color: black;");
+    this->R_lineEdit->at(this->processor->binToDec(this->processor->controlUnit->BAddr))->setStyleSheet("color: black;");
+
+    // Pisca Arrow AAdr to Abus e  Arrow BAdr to Bbus
+    this->arrowAAdrToABus->setPixmap(arrowRed->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowBAdrToBBus->setPixmap(arrowRed->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+
+    this->processor->delay(this->processor->time);
+
+    this->arrowAAdrToABus->setPixmap(arrowBlue->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowBAdrToBBus->setPixmap(arrowBlue->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+}
+
+void MainWindow::ABus_BBusUpdated()
+{
+    // Pisca Abus e Bbus
+    this->ABus_lineEdit->setText(QString::number(this->processor->dataPath->ABus));
+    this->BBus_lineEdit->setText(QString::number(this->processor->dataPath->BBus));
+
+    this->ABus_lineEdit->setStyleSheet("color: red;");
+    this->BBus_lineEdit->setStyleSheet("color: red;");
+    this->processor->delay(this->processor->time);
+    this->ABus_lineEdit->setStyleSheet("color: black;");
+    this->BBus_lineEdit->setStyleSheet("color: black;");
+
+    // Pisca Arrow AbusToalu e Arrow BbusToalu
+    this->arrowABusToALU->setPixmap(arrowRed->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowBBusToALU->setPixmap(arrowRed->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+
+    this->processor->delay(this->processor->time);
+
+    this->arrowABusToALU->setPixmap(arrowBlue->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->arrowBBusToALU->setPixmap(arrowBlue->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+}
+
+void MainWindow::ALU_1Updated()
+{
+    // Pisca alu->a e alu->b
+    this->ABusALU_lineEdit->setText(QString::number(this->processor->dataPath->alu->A));
+    this->BBusALU_lineEdit->setText(QString::number(this->processor->dataPath->alu->B));
+
+    this->ABusALU_lineEdit->setStyleSheet("color: red;");
+    this->BBusALU_lineEdit->setStyleSheet("color: red;");
+    this->processor->delay(this->processor->time);
+    this->ABusALU_lineEdit->setStyleSheet("color: black;");
+    this->BBusALU_lineEdit->setStyleSheet("color: black;");
+}
+
+void MainWindow::ALU_2Updated()
+{
+    // pisca alu->c
+    this->CBusALU_lineEdit->setText(QString::number(this->processor->dataPath->alu->C));
+
+    this->CBusALU_lineEdit->setStyleSheet("color: red;");
+    this->processor->delay(this->processor->time);
+    this->CBusALU_lineEdit->setStyleSheet("color: black;");
+}
+
+void MainWindow::ArrowAluToCBusUpdated()
+{
+    // pisca alu to c
+    this->arrowALUToCBus->setPixmap(arrowRed->at(4)->scaled(30, 30, Qt::KeepAspectRatio));
+
+    this->processor->delay(this->processor->time);
+
+    this->arrowALUToCBus->setPixmap(arrowBlue->at(4)->scaled(30, 30, Qt::KeepAspectRatio));
+}
+
+void MainWindow::CBusUpdated()
+{
+    // pisca c bus
+    this->CBus_lineEdit->setText(QString::number(this->processor->dataPath->CBus));
+
+    this->CBus_lineEdit->setStyleSheet("color: red;");
+    this->processor->delay(this->processor->time);
+    this->CBus_lineEdit->setStyleSheet("color: black;");
+}
+
+void MainWindow::ArrowCBusToMMBusUpdated()
+{
+    // pisca c to mm
+    this->arrowCBusToMMBus->setPixmap(arrowRed->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->processor->delay(this->processor->time);
+    this->arrowCBusToMMBus->setPixmap(arrowBlue->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+}
+
+void MainWindow::MMBusUpdated()
+{
+    // pisca mm bus
+    this->MMBus_lineEdit->setText(QString::number(this->processor->dataPath->MainMemoryBus));
+
+    this->MMBus_lineEdit->setStyleSheet("color: red;");
+    this->processor->delay(this->processor->time);
+    this->MMBus_lineEdit->setStyleSheet("color: black;");
+}
+
+void MainWindow::MainMemoryUpdated()
+{
+    // pisca mm
+    this->tableMemory->item(this->processor->binToDec(this->processor->controlUnit->RWAddr), 1)->setText(QString::number(this->processor->dataPath->MainMemoryBus));
+
+    this->tableMemory->item(this->processor->binToDec(this->processor->controlUnit->RWAddr), 1)->setForeground(QBrush(QColor(255, 0, 0)));
+    this->processor->delay(this->processor->time);
+    this->tableMemory->item(this->processor->binToDec(this->processor->controlUnit->RWAddr), 1)->setForeground(QBrush(QColor(0, 0, 0)));
+}
+
+void MainWindow::ArrowMMBusToCBusUpdated()
+{
+    // pisca mm to c
+    this->arrowMMBusToCBus->setPixmap(arrowRed->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->processor->delay(this->processor->time);
+    this->arrowMMBusToCBus->setPixmap(arrowBlue->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+}
+
+void MainWindow::ArrowCBusToCAdrUpdated()
+{
+    //pisca cbus to cadr
+    this->arrowCBusToCAdr->setPixmap(arrowRed->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+    this->processor->delay(this->processor->time);
+    this->arrowCBusToCAdr->setPixmap(arrowBlue->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+}
+
+void MainWindow::RegistersUpdated()
+{
+    // pisca registrador
+    this->R_lineEdit->at(this->processor->binToDec(this->processor->controlUnit->CAddr))->setText(QString::number(this->processor->dataPath->R[this->processor->binToDec(this->processor->controlUnit->CAddr)]));
+
+    this->R_lineEdit->at(this->processor->binToDec(this->processor->controlUnit->CAddr))->setStyleSheet("color: red;");
+    this->processor->delay(this->processor->time);
+    this->R_lineEdit->at(this->processor->binToDec(this->processor->controlUnit->CAddr))->setStyleSheet("color: black;");
 }

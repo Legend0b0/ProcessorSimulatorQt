@@ -63,6 +63,7 @@ private:
     QLabel *ABusALU_label = nullptr;
     QLabel *BBusALU_label = nullptr;
     QLabel *CBusALU_label = nullptr;
+    QLabel *ALU_label = nullptr;
     QLabel *arrowAAdrToABus = nullptr;
     QLabel *arrowBAdrToBBus = nullptr;
     QLabel *arrowABusToALU = nullptr;
@@ -82,20 +83,9 @@ private:
 
     QLabel *memory_label = nullptr;
 
-    QPixmap *arrowBTop = nullptr;
-    QPixmap *arrowBBot = nullptr;
-    QPixmap *arrowBRight = nullptr;
-    QPixmap *arrowBTopLeft = nullptr;
-    QPixmap *arrowBLeft = nullptr;
-    QPixmap *arrowRTop = nullptr;
-    QPixmap *arrowRBot = nullptr;
-    QPixmap *arrowRRight = nullptr;
-    QPixmap *arrowRLeft = nullptr;
-    QPixmap *arrowRTopLeft = nullptr;
-    QPixmap *ballArrowTop = nullptr;
-    QPixmap *ballArrowBot = nullptr;
-    QPixmap *ballArrowRight = nullptr;
-    QPixmap *ballArrowLeft = nullptr;
+    QVector<QPixmap*> *arrowBlue = nullptr;
+    QVector<QPixmap*> *arrowRed = nullptr;
+    QVector<QPixmap*> *ballArrow = nullptr;
 
     QLineEdit *PC_lineEdit = nullptr;
     QLineEdit *IR_lineEdit = nullptr;
@@ -106,10 +96,7 @@ private:
     QLineEdit *CAddr_lineEdit = nullptr;
     QLineEdit *RWAddr_lineEdit = nullptr;
 
-    QLineEdit *R0_lineEdit = nullptr;
-    QLineEdit *R1_lineEdit = nullptr;
-    QLineEdit *R2_lineEdit = nullptr;
-    QLineEdit *R3_lineEdit = nullptr;
+    QVector<QLineEdit*> *R_lineEdit = nullptr;
     QLineEdit *ABus_lineEdit = nullptr;
     QLineEdit *BBus_lineEdit = nullptr;
     QLineEdit *CBus_lineEdit = nullptr;
@@ -119,7 +106,7 @@ private:
     QLineEdit *CBusALU_lineEdit = nullptr;
 
     QPushButton *file_button = nullptr;
-    QPushButton *PC_button = nullptr;
+    QPushButton *resetPC_button = nullptr;
     QPushButton *execute_button = nullptr;
 
     QFile *file = nullptr;
@@ -152,7 +139,8 @@ private:
     QWidget *aBusALULayoutWindow = nullptr;
     QWidget *bBusALULayoutWindow = nullptr;
     QWidget *cBusALULayoutWindow = nullptr;
-    QWidget *aluLayoutWindow = nullptr;
+    QWidget *aluFormLayoutWindow = nullptr;
+    QWidget *aluVLayoutWindow = nullptr;
     QWidget *registersLayoutWindow = nullptr;
     QWidget *registerBankLayoutWindow = nullptr;
     QWidget *dataPathLayoutWindow = nullptr;
@@ -179,7 +167,8 @@ private:
     QHBoxLayout *aBusALULayout = nullptr;
     QHBoxLayout *bBusALULayout = nullptr;
     QHBoxLayout *cBusALULayout = nullptr;
-    QGridLayout *aluLayout = nullptr;
+    QFormLayout *aluFormLayout = nullptr;
+    QVBoxLayout *aluVLayout = nullptr;
     QFormLayout *registersLayout = nullptr;
     QGridLayout *registerBankLayout = nullptr;
     QVBoxLayout *dataPathLayout = nullptr;
@@ -216,15 +205,32 @@ protected:
 
     void verifyInstruction(QTableWidgetItem *item);
 
-    void execute();
-
 public slots:
     void darkTheme();
     void readFile();
     void textChanged(QTableWidgetItem *item);
     void sintaxeMemoryCatch(int i, int signal);
-    void catchControlUnit();
-    void catchPC();
+
+    void resetPC();
+    void execute();
+
+    void instructionUpdated();
+    void irUpdated();
+    void arrowsControlUnitUpdated();
+    void pcUpdated();
+    void controlUnitUpdated();
+    void Aaddr_BaddrUpdated();
+    void ABus_BBusUpdated();
+    void ALU_1Updated();
+    void ALU_2Updated();
+    void ArrowAluToCBusUpdated();
+    void CBusUpdated();
+    void ArrowCBusToMMBusUpdated();
+    void MMBusUpdated();
+    void MainMemoryUpdated();
+    void ArrowMMBusToCBusUpdated();
+    void ArrowCBusToCAdrUpdated();
+    void RegistersUpdated();
 
 signals:
     void sintaxeMemoryThrow(int i, int signal);

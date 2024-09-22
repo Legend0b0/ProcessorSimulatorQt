@@ -24,11 +24,6 @@ ALU::ALU()
     this->A = 0;
     this->B = 0;
     this->C = 0;
-
-    this->Op[0] = &ALU::operationAdd;
-    this->Op[1] = &ALU::operationSub;
-    this->Op[2] = &ALU::operationAnd;
-    this->Op[3] = &ALU::operationOr;
 }
 
 ALU::~ALU()

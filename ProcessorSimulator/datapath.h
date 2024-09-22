@@ -13,8 +13,6 @@ public:
     int B;
     int C;
 
-    void (ALU::*Op[4])();
-
     void operationAdd();
     void operationSub();
     void operationAnd();

@@ -15,8 +15,9 @@ public:
     Processor(QObject* parent = nullptr);
     ~Processor();
 
-    bool cicle_dataPath = false;
     bool halt = false;
+    bool changePC = false;
+    bool cicle_dataPath = false;
     int time;
 
     ControlUnit *controlUnit = nullptr;
@@ -27,6 +28,7 @@ public:
     int binToDec(QString bin);
     QString decToBin(int dec, int bits);
     void instructionInterpretation();
+    void ALUOperation();
     void clock();
 
     void LOAD();
@@ -43,10 +45,24 @@ public:
     void HALT();
 
 signals:
+    void updateInstruction();
     void updateIR();
-    void updateIR();
+    void updateArrowsControlUnit();
     void updatePC();
     void updateControlUnit();
+    void updateAaddr_Baddr();
+    void updateABus_BBus();
+    void updateALU_1();
+    void updateALU_2();
+    void updateArrowAluToCBus();
+    void updateCBus();
+    void updateArrowCBusToMMBus();
+    void updateMMBus();
+    void updateMainMemory();
+    void updateArrowMMBusToCBus();
+    void updateArrowCBusToCAdr();
+    void updateRegisters();
+
 };
 
 #endif // PROCESSOR_H
