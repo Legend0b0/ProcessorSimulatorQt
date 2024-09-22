@@ -2,6 +2,8 @@
 #define PROCESSOR_H
 
 #include <QObject>
+#include <QTimer>
+#include <QEventLoop>
 #include "controlunit.h"
 #include "datapath.h"
 
@@ -15,11 +17,13 @@ public:
 
     bool cicle_dataPath = false;
     bool halt = false;
+    int time;
 
     ControlUnit *controlUnit = nullptr;
     DataPath *dataPath = nullptr;
     QStringList *mainMemory = nullptr;
 
+    void delay(int ms);
     int binToDec(QString bin);
     QString decToBin(int dec, int bits);
     void instructionInterpretation();
@@ -39,8 +43,10 @@ public:
     void HALT();
 
 signals:
-    void throwControlUnit();
-    void throwPC();
+    void updateIR();
+    void updateIR();
+    void updatePC();
+    void updateControlUnit();
 };
 
 #endif // PROCESSOR_H

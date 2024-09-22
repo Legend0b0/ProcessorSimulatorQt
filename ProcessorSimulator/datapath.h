@@ -13,13 +13,15 @@ public:
     int B;
     int C;
 
-    void (*Op[4])();
+    void (ALU::*Op[4])();
 
-public slots:
     void operationAdd();
     void operationSub();
     void operationAnd();
     void operationOr();
+
+public slots:
+
 };
 
 class DataPath

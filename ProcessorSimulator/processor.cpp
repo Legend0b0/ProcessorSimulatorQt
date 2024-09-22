@@ -7,6 +7,8 @@ Processor::Processor(QObject*)
     this->mainMemory = new QStringList;
 
     this->mainMemory->fill("0", 32);
+
+    this->time = 1000;
 }
 
 Processor::~Processor()
@@ -14,6 +16,16 @@ Processor::~Processor()
     delete this->controlUnit;
     delete this->dataPath;
     delete this->mainMemory;
+}
+
+void Processor::delay(int ms)
+{
+    QTimer timer;
+    timer.setInterval(ms);
+    QEventLoop loop;
+    QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+    timer.start();
+    loop.exec();
 }
 
 int Processor::binToDec(QString bin)
@@ -110,8 +122,12 @@ void Processor::clock()
     {
         this->controlUnit->IR.clear();
         this->controlUnit->IR.append(this->mainMemory->at(this->controlUnit->PC));
+        //emit ir
+        this->delay(this->time);
 
         this->instructionInterpretation();
+        //emit instructionInterpretation
+        this->delay(this->time);
 
         if((!this->halt) && (this->cicle_dataPath))
         {
@@ -119,38 +135,56 @@ void Processor::clock()
             {
                 this->controlUnit->PC = 0;
             }
-
             emit this->throwPC();
+            this->delay(this->time);
+
             emit this->throwControlUnit();
+            this->delay(this->time);
 
             // dataPath cicle
             this->dataPath->ABus = this->dataPath->R[this->binToDec(this->controlUnit->AAddr)];
             this->dataPath->BBus = this->dataPath->R[this->binToDec(this->controlUnit->BAddr)];
+            //emit Abus Bus
+            this->delay(this->time);
 
             this->dataPath->alu->A = this->dataPath->ABus;
             this->dataPath->alu->B = this->dataPath->BBus;
+            // emit alu a e b
+            this->delay(this->time);
 
             this->dataPath->alu->Op[this->binToDec(this->controlUnit->UlaOp)];
+            // emit alu c
+            this->delay(this->time);
 
             if(this->controlUnit->SwitchPos[3] == '1')
             {
                 this->dataPath->CBus = this->dataPath->alu->C;
+                // emit cbus
+                this->delay(this->time);
             }
 
             if(this->controlUnit->SwitchPos[1] == '1')
             {
                 this->dataPath->CBus = this->dataPath->MainMemoryBus;
+                // emit c to mm
+                this->delay(this->time);
             }
             else if(this->controlUnit->SwitchPos[2] == '1')
             {
                 this->dataPath->MainMemoryBus = this->dataPath->CBus;
+                // emit mm to c
+                this->delay(this->time);
             }
 
             if(this->controlUnit->SwitchPos[0] == '1')
             {
                 this->dataPath->R[this->binToDec(this->controlUnit->CAddr)] = this->dataPath->CBus = this->dataPath->CBus;
+                // emit c to r
+                this->delay(this->time);
             }
         }
+
+        break;
     }
 }
 
