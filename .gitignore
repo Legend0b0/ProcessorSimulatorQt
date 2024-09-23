@@ -1,2 +1,5 @@
 */build/*
 *.pro.user
+*banco_registradores.txt
+*memoria_ram.txt
+*unidade_controle.txt

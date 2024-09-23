@@ -86,6 +86,7 @@ private:
     QLabel *memory_label = nullptr;
 
     QVector<QPixmap*> *arrowBlue = nullptr;
+    QVector<QPixmap*> *arrowBlueX = nullptr;
     QVector<QPixmap*> *arrowRed = nullptr;
     QVector<QPixmap*> *ballArrow = nullptr;
 

@@ -73,6 +73,8 @@ MainWindow::~MainWindow()
 
     this->arrowBlue->clear();
     delete this->arrowBlue;
+    this->arrowBlueX->clear();
+    delete this->arrowBlueX;
     this->arrowRed->clear();
     delete this->arrowRed;
     this->ballArrow->clear();
@@ -193,6 +195,7 @@ void MainWindow::createWidgets()
     this->createMainMemoryWidgets();
 
     this->arrowBlue = new QVector<QPixmap*>;
+    this->arrowBlueX = new QVector<QPixmap*>;
     this->arrowRed = new QVector<QPixmap*>;
     this->ballArrow = new QVector<QPixmap*>;
     this->arrowBlue->append(new QPixmap(":/img/ArrowBTop.png"));
@@ -200,6 +203,11 @@ void MainWindow::createWidgets()
     this->arrowBlue->append(new QPixmap(":/img/ArrowBBot.png"));
     this->arrowBlue->append(new QPixmap(":/img/ArrowBLeft.png"));
     this->arrowBlue->append(new QPixmap(":/img/ArrowBTopLeft.png"));
+    this->arrowBlueX->append(new QPixmap(":/img/ArrowBXTop.png"));
+    this->arrowBlueX->append(new QPixmap(":/img/ArrowBXRight.png"));
+    this->arrowBlueX->append(new QPixmap(":/img/ArrowBXBot.png"));
+    this->arrowBlueX->append(new QPixmap(":/img/ArrowBXLeft.png"));
+    this->arrowBlueX->append(new QPixmap(":/img/ArrowBXTopLeft.png"));
     this->arrowRed->append(new QPixmap(":/img/ArrowRTop.png"));
     this->arrowRed->append(new QPixmap(":/img/ArrowRRight.png"));
     this->arrowRed->append(new QPixmap(":/img/ArrowRBot.png"));
@@ -343,9 +351,16 @@ void MainWindow::configureWidgets()
 
 void MainWindow::configureControlUnitWidgets()
 {
+    QFont Title("Arial", 15);
+    QFont SubTitle("Arial", 12);
+
+    this->controlUnit_label->setFont(Title);
+    this->controlUnit_label->setStyleSheet("background-color: rgb(75, 75, 75); color: white;");
     this->controlUnit_label->setAlignment(Qt::AlignCenter);
 
+    this->microInstruction_label->setFont(SubTitle);
     this->microInstruction_label->setAlignment(Qt::AlignCenter);
+
     this->PC_label->setAlignment(Qt::AlignCenter);
     this->IR_label->setAlignment(Qt::AlignCenter);
     this->AAddr_label->setAlignment(Qt::AlignCenter);
@@ -401,7 +416,15 @@ void MainWindow::configureControlUnitWidgets()
 
 void MainWindow::configureDataPathWidgets()
 {
+    QFont Title("Arial", 15);
+    QFont SubTitle("Arial", 12);
+
+    this->dataPath_label->setFont(Title);
+    this->dataPath_label->setStyleSheet("background-color: rgb(75, 75, 75); color: white;");
     this->dataPath_label->setAlignment(Qt::AlignCenter);
+
+    this->registerBank_label->setFont(SubTitle);
+    this->registerBank_label->setStyleSheet("background-color: rgb(75, 75, 75); color: white;");
     this->registerBank_label->setAlignment(Qt::AlignCenter);
 
     this->ABusAdr_label->setAlignment(Qt::AlignCenter);
@@ -462,6 +485,9 @@ void MainWindow::configureDataPathWidgets()
 
 void MainWindow::configureMainMemoryWidgets()
 {
+    QFont Title("Arial", 15);
+    this->memory_label->setFont(Title);
+    this->memory_label->setStyleSheet("background-color: rgb(75, 75, 75); color: white;");
     this->memory_label->setAlignment(Qt::AlignCenter);
 }
 
@@ -593,12 +619,22 @@ void MainWindow::settingLayouts()
 
 void MainWindow::settingControlUnitLayouts()
 {
+    QPalette pal = this->palette();
+    pal.setColor(QPalette::Window, QColor(75, 75, 75));
+    pal.setColor(QPalette::WindowText, Qt::white);
+    pal.setColor(QPalette::Button, QColor(35, 45, 63));
+    pal.setColor(QPalette::ButtonText, Qt::white);
+
     this->pcLayout->addWidget(this->PC_label);
     this->pcLayout->addWidget(this->PC_lineEdit);
     this->pcLayout->addWidget(this->resetPC_button);
+    this->pcLayoutWindow->setPalette(pal);
+    this->pcLayoutWindow->setAutoFillBackground(true);
 
     this->irLayout->addWidget(this->IR_label);
     this->irLayout->addWidget(this->IR_lineEdit);
+    this->irLayoutWindow->setPalette(pal);
+    this->irLayoutWindow->setAutoFillBackground(true);
 
     this->pcirLayout->addWidget(this->pcLayoutWindow);
     this->pcirLayout->addSpacing(10);
@@ -627,6 +663,8 @@ void MainWindow::settingControlUnitLayouts()
     this->microVInstructionLayout->addWidget(this->microInstructionLayoutWindow);
     this->microVInstructionLayout->addWidget(this->pcirLayoutWindow);
     this->microVInstructionLayout->setAlignment(Qt::AlignCenter);
+    this->microVInstructionLayoutWindow->setPalette(pal);
+    this->microVInstructionLayoutWindow->setAutoFillBackground(true);
 
     this->buttonsLayout->addSpacing(50);
     this->buttonsLayout->addWidget(this->execute_button);
@@ -635,12 +673,14 @@ void MainWindow::settingControlUnitLayouts()
     this->buttonsLayout->addWidget(this->time_label);
     this->buttonsLayout->addWidget(this->time_comboBox);
     this->buttonsLayout->addSpacing(50);
+    this->buttonsLayoutWindow->setPalette(pal);
+    this->buttonsLayoutWindow->setAutoFillBackground(true);
 
     this->microHInstructionLayout->addWidget(this->microVInstructionLayoutWindow);
     this->microHInstructionLayout->addWidget(this->buttonsLayoutWindow);
+    this->microHInstructionLayout->setContentsMargins(0,0,0,0);
 
     this->controlUnitLayout->addWidget(this->controlUnit_label);
-    this->controlUnitLayout->addSpacing(30);
     this->controlUnitLayout->addWidget(this->microHInstructionLayoutWindow);
     this->controlUnitLayout->setAlignment(Qt::AlignCenter);
 
@@ -650,12 +690,20 @@ void MainWindow::settingControlUnitLayouts()
 
 void MainWindow::settingDataPathLayouts()
 {
+    QPalette pal = this->palette();
+    pal.setColor(QPalette::Window, QColor(75, 75, 75));
+    pal.setColor(QPalette::WindowText, Qt::white);
+    pal.setColor(QPalette::Button, QColor(35, 45, 63));
+    pal.setColor(QPalette::ButtonText, Qt::white);
+
     this->aAdrLayout->addWidget(this->ABusAdr_label, 0, 1);
     this->aAdrLayout->addWidget(this->rAAdr->at(0), 1, 1);
     this->aAdrLayout->addWidget(this->rAAdr->at(1), 2, 2);
     this->aAdrLayout->addWidget(this->rAAdr->at(2), 3, 1);
     this->aAdrLayout->addWidget(this->rAAdr->at(3), 2, 0);
     this->aAdrLayout->addWidget(this->ballArrowAAdr, 2, 1);
+    this->aAdrLayoutWindow->setPalette(pal);
+    this->aAdrLayoutWindow->setAutoFillBackground(true);
 
     this->bAdrLayout->addWidget(this->BBusAdr_label, 0, 1);
     this->bAdrLayout->addWidget(this->rBAdr->at(0), 1, 1);
@@ -663,6 +711,8 @@ void MainWindow::settingDataPathLayouts()
     this->bAdrLayout->addWidget(this->rBAdr->at(2), 3, 1);
     this->bAdrLayout->addWidget(this->rBAdr->at(3), 2, 0);
     this->bAdrLayout->addWidget(this->ballArrowBAdr, 2, 1);
+    this->bAdrLayoutWindow->setPalette(pal);
+    this->bAdrLayoutWindow->setAutoFillBackground(true);
 
     this->cAdrLayout->addWidget(this->CBusAdr_label, 0, 1);
     this->cAdrLayout->addWidget(this->rCAdr->at(0), 1, 1);
@@ -670,6 +720,8 @@ void MainWindow::settingDataPathLayouts()
     this->cAdrLayout->addWidget(this->rCAdr->at(2), 3, 1);
     this->cAdrLayout->addWidget(this->rCAdr->at(3), 2, 0);
     this->cAdrLayout->addWidget(this->ballArrowCAdr, 2, 1);
+    this->cAdrLayoutWindow->setPalette(pal);
+    this->cAdrLayoutWindow->setAutoFillBackground(true);
 
     this->aluArrowLayout->addWidget(this->rALU->at(0), 1, 1);
     this->aluArrowLayout->addWidget(this->rALU->at(1), 2, 2);
@@ -679,20 +731,30 @@ void MainWindow::settingDataPathLayouts()
 
     this->aBusLayout->addWidget(this->ABus_label);
     this->aBusLayout->addWidget(this->ABus_lineEdit);
+    this->aBusLayoutWindow->setPalette(pal);
+    this->aBusLayoutWindow->setAutoFillBackground(true);
 
     this->bBusLayout->addWidget(this->BBus_label);
     this->bBusLayout->addWidget(this->BBus_lineEdit);
+    this->bBusLayoutWindow->setPalette(pal);
+    this->bBusLayoutWindow->setAutoFillBackground(true);
 
     this->cBusLayout->addWidget(this->CBus_label);
     this->cBusLayout->addWidget(this->CBus_lineEdit);
+    this->cBusLayoutWindow->setPalette(pal);
+    this->cBusLayoutWindow->setAutoFillBackground(true);
 
     this->mmBusLayout->addWidget(this->MMBus_label);
     this->mmBusLayout->addWidget(this->MMBus_lineEdit);
+    this->mmBusLayoutWindow->setPalette(pal);
+    this->mmBusLayoutWindow->setAutoFillBackground(true);
 
     this->registersLayout->addRow(this->R0_label, this->R_lineEdit->at(0));
     this->registersLayout->addRow(this->R1_label, this->R_lineEdit->at(1));
     this->registersLayout->addRow(this->R2_label, this->R_lineEdit->at(2));
     this->registersLayout->addRow(this->R3_label, this->R_lineEdit->at(3));
+    this->registersLayoutWindow->setPalette(pal);
+    this->registersLayoutWindow->setAutoFillBackground(true);
 
     this->aBusALULayout->addWidget(this->ABusALU_label);
     this->aBusALULayout->addWidget(this->ABusALU_lineEdit);
@@ -708,6 +770,8 @@ void MainWindow::settingDataPathLayouts()
 
     this->aluVLayout->addWidget(this->ALU_label);
     this->aluVLayout->addWidget(this->aluFormLayoutWindow);
+    this->aluVLayoutWindow->setPalette(pal);
+    this->aluVLayoutWindow->setAutoFillBackground(true);
 
     this->registerBankLayout->addWidget(this->cAdrLayoutWindow, 0, 0);
     this->registerBankLayout->addWidget(this->registersLayoutWindow, 0, 1);
@@ -726,9 +790,10 @@ void MainWindow::settingDataPathLayouts()
     this->registerBankLayout->addWidget(this->arrowBBusToALU, 3, 3);
     this->registerBankLayout->addWidget(this->mmBusLayoutWindow, 4, 0);
     this->registerBankLayout->addWidget(this->aluVLayoutWindow, 4, 2, 4, 3);
+    this->registerBankLayout->setContentsMargins(0,0,0,0);
 
     this->dataPathLayout->addWidget(this->dataPath_label);
-    this->dataPathLayout->addSpacing(30);
+    this->dataPathLayout->addSpacing(10);
     this->dataPathLayout->addWidget(this->registerBank_label);
     this->dataPathLayout->addWidget(this->registerBankLayoutWindow);
     this->dataPathLayout->setAlignment(Qt::AlignCenter);
@@ -1107,10 +1172,46 @@ void MainWindow::controlUnitUpdated()
     this->PC_lineEdit->setStyleSheet("color: black;");
 
     //Arrumar BallArrows
-    this->ballArrowAAdr->setPixmap(ballArrow->at(this->processor->binToDec(this->processor->controlUnit->AAddr))->scaled(30, 30, Qt::KeepAspectRatio));
-    this->ballArrowBAdr->setPixmap(ballArrow->at(this->processor->binToDec(this->processor->controlUnit->BAddr))->scaled(30, 30, Qt::KeepAspectRatio));
-    this->ballArrowCAdr->setPixmap(ballArrow->at(this->processor->binToDec(this->processor->controlUnit->CAddr))->scaled(30, 30, Qt::KeepAspectRatio));
-    this->ballArrowALU->setPixmap(ballArrow->at(this->processor->binToDec(this->processor->controlUnit->UlaOp))->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowAAdr->setPixmap(this->ballArrow->at(this->processor->binToDec(this->processor->controlUnit->AAddr))->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowBAdr->setPixmap(this->ballArrow->at(this->processor->binToDec(this->processor->controlUnit->BAddr))->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowCAdr->setPixmap(this->ballArrow->at(this->processor->binToDec(this->processor->controlUnit->CAddr))->scaled(30, 30, Qt::KeepAspectRatio));
+    this->ballArrowALU->setPixmap(this->ballArrow->at(this->processor->binToDec(this->processor->controlUnit->UlaOp))->scaled(30, 30, Qt::KeepAspectRatio));
+
+    if(this->processor->controlUnit->SwitchPos[3] == '1')
+    {
+        this->arrowALUToCBus->setPixmap(this->arrowBlue->at(4)->scaled(30, 30, Qt::KeepAspectRatio));
+    }
+    else
+    {
+        this->arrowALUToCBus->setPixmap(this->arrowBlueX->at(4)->scaled(30, 30, Qt::KeepAspectRatio));
+    }
+
+    if(this->processor->controlUnit->SwitchPos[1] == '1')
+    {
+        this->arrowCBusToMMBus->setPixmap(this->arrowBlue->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+    }
+    else
+    {
+        this->arrowCBusToMMBus->setPixmap(this->arrowBlueX->at(2)->scaled(30, 30, Qt::KeepAspectRatio));
+    }
+
+    if(this->processor->controlUnit->SwitchPos[2] == '1')
+    {
+        this->arrowMMBusToCBus->setPixmap(this->arrowBlue->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+    }
+    else
+    {
+        this->arrowMMBusToCBus->setPixmap(this->arrowBlueX->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+    }
+
+    if(this->processor->controlUnit->SwitchPos[0] == '1')
+    {
+        this->arrowCBusToCAdr->setPixmap(this->arrowBlue->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+    }
+    else
+    {
+        this->arrowCBusToCAdr->setPixmap(this->arrowBlueX->at(0)->scaled(30, 30, Qt::KeepAspectRatio));
+    }
 }
 
 void MainWindow::Aaddr_BaddrUpdated()

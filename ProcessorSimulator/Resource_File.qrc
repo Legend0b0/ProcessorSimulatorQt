@@ -14,5 +14,10 @@
         <file>img/BallArrowTop.png</file>
         <file>img/ArrowBTopLeft.png</file>
         <file>img/ArrowRTopLeft.png</file>
+        <file>img/ArrowBXBot.png</file>
+        <file>img/ArrowBXLeft.png</file>
+        <file>img/ArrowBXRight.png</file>
+        <file>img/ArrowBXTop.png</file>
+        <file>img/ArrowBXTopLeft.png</file>
     </qresource>
 </RCC>
