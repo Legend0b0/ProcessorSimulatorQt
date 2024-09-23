@@ -24,6 +24,7 @@ public:
     DataPath *dataPath = nullptr;
     QStringList *mainMemory = nullptr;
 
+    int *get();
     void delay(int ms);
     int binToDec(QString bin);
     QString decToBin(int dec, int bits);

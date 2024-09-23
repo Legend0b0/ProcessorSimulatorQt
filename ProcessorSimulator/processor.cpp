@@ -18,6 +18,11 @@ Processor::~Processor()
     delete this->mainMemory;
 }
 
+int *Processor::get()
+{
+    return this->dataPath->R;
+}
+
 void Processor::delay(int ms)
 {
     QTimer timer;
@@ -288,7 +293,7 @@ void Processor::MOVE()
 
     this->controlUnit->AAddr = this->decToBin(inst[2].toInt(), 2);
     this->controlUnit->BAddr = this->decToBin(inst[2].toInt(), 2);
-    this->controlUnit->UlaOp = this->decToBin(1, 2);
+    this->controlUnit->UlaOp = this->decToBin(3, 2);
     this->controlUnit->SwitchPos = "1001";
     this->controlUnit->CAddr = this->decToBin(inst[1].toInt(), 2);
     this->controlUnit->RWAddr = this->decToBin(0, 5);

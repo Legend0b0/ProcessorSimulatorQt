@@ -27,6 +27,7 @@ MainWindow::~MainWindow()
     delete this->SwitchPos_label;
     delete this->CAddr_label;
     delete this->RWAddr_label;
+    delete this->time_label;
     delete this->arrowIRToPC;
     delete this->arrowIRToMIR;
 
@@ -100,27 +101,31 @@ MainWindow::~MainWindow()
     delete this->file_button;
     delete this->resetPC_button;
     delete this->execute_button;
+    delete this->halt_button;
 
     delete this->time_comboBox;
 
     delete this->file;
     delete this->file_RamMemory;
+    delete this->file_PCIR;
+    delete this->file_registers;
 
     delete this->tableMemory;
 
     delete this->processor;
+
     delete this->buttonsLayout;
     delete this->buttonsLayoutWindow;
+    delete this->irLayout;
+    delete this->irLayoutWindow;
+    delete this->pcLayout;
+    delete this->pcLayoutWindow;
     delete this->microInstructionLayout;
     delete this->microInstructionLayoutWindow;
     delete this->microVInstructionLayout;
     delete this->microVInstructionLayoutWindow;
     delete this->microHInstructionLayout;
     delete this->microHInstructionLayoutWindow;
-    delete this->irLayout;
-    delete this->irLayoutWindow;
-    delete this->pcLayout;
-    delete this->pcLayoutWindow;
     delete this->controlUnitLayout;
     delete this->controlUnitLayoutWindow;
     delete this->controlUnitScroll;
@@ -221,6 +226,7 @@ void MainWindow::createControlUnitWidgets()
     this->SwitchPos_label = new QLabel("Switch Pos:");
     this->CAddr_label = new QLabel("C Addr:");
     this->RWAddr_label = new QLabel("RW Addr:");
+    this->time_label = new QLabel("Latency (ms):");
     this->arrowIRToPC = new QLabel;
     this->arrowIRToMIR = new QLabel;
 
@@ -235,6 +241,7 @@ void MainWindow::createControlUnitWidgets()
 
     this->resetPC_button = new QPushButton("Reset");
     this->execute_button = new QPushButton("Execute");
+    this->halt_button = new QPushButton("Halt");
 
     this->time_comboBox = new QComboBox;
 
@@ -319,6 +326,8 @@ void MainWindow::createMainMemoryWidgets()
 
     this->file = new QFile;
     this->file_RamMemory = new QFile;
+    this->file_registers = new QFile;
+    this->file_PCIR = new QFile;
 
     this->createTableMemory();
 }
@@ -329,7 +338,7 @@ void MainWindow::configureWidgets()
     this->configureDataPathWidgets();
     this->configureMainMemoryWidgets();
 
-    QDir::setCurrent("../..");
+    QDir::setCurrent("../../in_out");
 }
 
 void MainWindow::configureControlUnitWidgets()
@@ -344,6 +353,7 @@ void MainWindow::configureControlUnitWidgets()
     this->AluOp_label->setAlignment(Qt::AlignCenter);
     this->SwitchPos_label->setAlignment(Qt::AlignCenter);
     this->CAddr_label->setAlignment(Qt::AlignCenter);
+    this->time_label->setAlignment(Qt::AlignBottom);
     this->RWAddr_label->setAlignment(Qt::AlignCenter);
     this->arrowIRToMIR->setAlignment(Qt::AlignBottom|Qt::AlignRight);
 
@@ -377,6 +387,10 @@ void MainWindow::configureControlUnitWidgets()
     this->CAddr_lineEdit->setReadOnly(true);
     this->RWAddr_lineEdit->setReadOnly(true);
 
+    this->execute_button->setEnabled(true);
+    this->execute_button->setStyleSheet("background-color: rgb(35, 45, 63); color: white;");
+    this->halt_button->setEnabled(false);
+    this->halt_button->setStyleSheet("background-color: rgb(37, 42, 51); color: white;");
     this->resetPC_button->setFixedWidth(60);
 
     this->time_comboBox->insertItem(0, "10");
@@ -614,8 +628,13 @@ void MainWindow::settingControlUnitLayouts()
     this->microVInstructionLayout->addWidget(this->pcirLayoutWindow);
     this->microVInstructionLayout->setAlignment(Qt::AlignCenter);
 
+    this->buttonsLayout->addSpacing(50);
     this->buttonsLayout->addWidget(this->execute_button);
+    this->buttonsLayout->addWidget(this->halt_button);
+    this->buttonsLayout->addSpacing(30);
+    this->buttonsLayout->addWidget(this->time_label);
     this->buttonsLayout->addWidget(this->time_comboBox);
+    this->buttonsLayout->addSpacing(50);
 
     this->microHInstructionLayout->addWidget(this->microVInstructionLayoutWindow);
     this->microHInstructionLayout->addWidget(this->buttonsLayoutWindow);
@@ -731,6 +750,7 @@ void MainWindow::connects()
     QObject::connect(this, &MainWindow::sintaxeMemoryThrow, this, &MainWindow::sintaxeMemoryCatch);
     QObject::connect(this->resetPC_button, &QPushButton::clicked, this, &MainWindow::resetPC);
     QObject::connect(this->execute_button, &QPushButton::clicked, this, &MainWindow::execute);
+    QObject::connect(this->halt_button, &QPushButton::clicked, this, &MainWindow::halt);
     QObject::connect(this->file_button, &QPushButton::clicked, this, &MainWindow::readFile);
     QObject::connect(this->tableMemory, &QTableWidget::itemChanged, this, &MainWindow::textChanged);
 
@@ -780,17 +800,55 @@ void MainWindow::darkTheme()
     this->setPalette(pal);
 }
 
-void MainWindow::readFile()
+void MainWindow::created_files()
 {
-    QString filename = QFileDialog::getOpenFileName(this, tr("Abrir ficheiro"),QDir::currentPath(), tr("Text files (*.txt)"));
+    this->file_PCIR->setFileName("unidade_controle.txt");
+    this->file_registers->setFileName("banco_registradores.txt");
+    this->file_RamMemory->setFileName("memoria_ram.txt");
 
-    file->setFileName(filename);
-    file_RamMemory->setFileName("memoria_ram.txt");
+    QTextStream out(file_RamMemory);
+    QTextStream outR(file_registers);
+    QTextStream outP(file_PCIR);
 
     if(!file_RamMemory->open(QIODevice::WriteOnly | QIODevice::Text))
     {
         return;
     }
+    if(!file_registers->open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        return;
+    }
+    if(!file_PCIR->open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        return;
+    }
+
+
+    int *Reg = processor->get();
+
+    for(int i = 0; (i < 32) ; i++)
+    {
+        out << this->tableMemory->item(i,1)->text() << "\n";
+    }
+
+    for(int i=0;i<4;i++)
+    {
+        outR << "R" << i << ": " << Reg[i] << "\n";
+    }
+    outP << processor->controlUnit->PC << "\n";
+    outP << processor->controlUnit->IR << "\n";
+
+    this->file_RamMemory->close();
+    this->file_registers->close();
+    this->file_PCIR->close();
+}
+
+void MainWindow::readFile()
+{
+    QString filename = QFileDialog::getOpenFileName(this, tr("Abrir ficheiro"),QDir::currentPath(), tr("Text files (*.txt)"));
+
+    this->file->setFileName(filename);
+
     if(!file->open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QMessageBox::information(this,"Error","File not found");
@@ -798,7 +856,6 @@ void MainWindow::readFile()
     }
 
     QString line;
-    QTextStream out(file_RamMemory);
     QTextStream in(file);
 
     int i = 0;
@@ -812,8 +869,7 @@ void MainWindow::readFile()
         }
         else
         {
-            out << line << "\n";
-            tableMemory->item(i, 1)->setText(line);
+            this->tableMemory->item(i, 1)->setText(line);
         }
     }
 
@@ -822,8 +878,7 @@ void MainWindow::readFile()
         tableMemory->item(i, 1)->setText("0");
     }
 
-    file->close();
-    file_RamMemory->close();
+    this->file->close();
 }
 
 void MainWindow::textChanged(QTableWidgetItem *item)
@@ -932,13 +987,21 @@ void MainWindow::execute()
         this->processor->mainMemory->replace(i, this->tableMemory->item(i, 1)->text());
     }
 
-    //this->execute_button->setText("Halt");
-    //QObject::disconnect(this->execute_button);
-    //QObject::connect(this->execute_button, &QPushButton::clicked, this, &MainWindow::halt);
+    this->execute_button->setEnabled(false);
+    this->execute_button->setStyleSheet("background-color: rgb(37, 42, 51); color: white;");
+    this->halt_button->setEnabled(true);
+    this->halt_button->setStyleSheet("background-color: rgb(35, 45, 63); color: white;");
 
     this->processor->time = this->time_comboBox->currentText().toInt();
 
     this->processor->clock();
+
+    this->created_files();
+
+    this->execute_button->setEnabled(true);
+    this->execute_button->setStyleSheet("background-color: rgb(35, 45, 63); color: white;");
+    this->halt_button->setEnabled(false);
+    this->halt_button->setStyleSheet("background-color: rgb(37, 42, 51); color: white;");
 
     return;
 }
@@ -947,9 +1010,10 @@ void MainWindow::halt()
 {
     this->processor->halt = true;
 
-    this->execute_button->setText("Execute");
-    QObject::disconnect(this->execute_button);
-    QObject::connect(this->execute_button, &QPushButton::clicked, this, &MainWindow::execute);
+    this->execute_button->setEnabled(true);
+    this->execute_button->setStyleSheet("background-color: rgb(35, 45, 63); color: white;");
+    this->halt_button->setEnabled(false);
+    this->halt_button->setStyleSheet("background-color: rgb(37, 42, 51); color: white;");
 
     return;
 }

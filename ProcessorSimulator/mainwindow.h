@@ -45,6 +45,7 @@ private:
     QLabel *SwitchPos_label = nullptr;
     QLabel *CAddr_label = nullptr;
     QLabel *RWAddr_label = nullptr;
+    QLabel *time_label = nullptr;
     QLabel *arrowIRToPC = nullptr;
     QLabel *arrowIRToMIR = nullptr;
 
@@ -109,11 +110,14 @@ private:
     QPushButton *file_button = nullptr;
     QPushButton *resetPC_button = nullptr;
     QPushButton *execute_button = nullptr;
+    QPushButton *halt_button = nullptr;
 
     QComboBox *time_comboBox = nullptr;
 
     QFile *file = nullptr;
     QFile *file_RamMemory = nullptr;
+    QFile *file_PCIR = nullptr;
+    QFile *file_registers = nullptr;
 
     QSplitter *split = nullptr;
 
@@ -216,6 +220,7 @@ protected:
 
 public slots:
     void darkTheme();
+    void created_files();
     void readFile();
     void textChanged(QTableWidgetItem *item);
     void sintaxeMemoryCatch(int i, int signal);
