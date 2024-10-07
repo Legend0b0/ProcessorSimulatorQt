@@ -246,7 +246,7 @@ void Processor::clock()
         {
             emit this->updateArrowCBusToCAdr();
 
-            this->dataPath->R[this->binToDec(this->controlUnit->CAddr)] = this->dataPath->CBus = this->dataPath->CBus;
+            this->dataPath->R[this->binToDec(this->controlUnit->CAddr)] = this->dataPath->CBus;
 
             emit this->updateRegisters();
         }
